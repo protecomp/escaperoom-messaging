@@ -17,8 +17,8 @@ python --version
 pip install -r requirements.txt
 ```
 
-Start app:
+Start app in development mode:
 
 ```
-python escape_me/app.py
+FLASK_ENV=development python escape_me/app.py
 ```
