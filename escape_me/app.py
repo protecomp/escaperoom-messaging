@@ -57,4 +57,4 @@ def respond(message):
     emit('my_response', {'data': message['data']})
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, host='0.0.0.0')
