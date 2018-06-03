@@ -4,14 +4,14 @@ $(document).ready(function() {
     var socket = io.connect();
     var message = "";
 
+    text_animate_loop = null;
     function text_animate() {
         var new_char = message.charAt($('#msg').text().length)
         $('#msg').text($('#msg').text() + new_char)
-        if (message == $('#msg').text()) {
+        if (message.length == $('#msg').text().length) {
             clearInterval(text_animate_loop);
         }
     }
-    text_animate_loop = null;
 
     // Event handler for new connections.
     // The callback function is invoked when a connection with the
@@ -27,6 +27,7 @@ $(document).ready(function() {
     socket.on('set_message', function(msg) {
         $('#msg').text("")
         message = msg['data'];
+        clearInterval(text_animate_loop);
         text_animate_loop = setInterval(text_animate, 100);
     });
 
