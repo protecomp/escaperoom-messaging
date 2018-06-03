@@ -42,6 +42,12 @@ $(document).ready(function() {
     // section of the page.
     socket.on('my_response', function(msg) {
         log_entry(msg.event, msg.data);
+        if (msg.event === "hint request") {
+            $('form#emit input[type=submit]').removeAttr('disabled');
+        }
+        if (msg.event === "hint set") {
+            $('form#emit input[type=submit]').attr('disabled', true);
+        }
     });
 
 
@@ -49,7 +55,10 @@ $(document).ready(function() {
     // These accept data from the user and send it to the server in a
     // variety of ways
     $('form#emit').submit(function(event) {
-        socket.emit('my_message', {data: $('#emit_data').val()});
+        let val = $('#emit_data').val();
+        if (val.length > 0) {
+            socket.emit('my_message', {data: $('#emit_data').val()});
+        }
         return false;
     });
     $('form#disconnect').submit(function(event) {
