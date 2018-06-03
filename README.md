@@ -17,8 +17,12 @@ python --version
 pip install -r requirements.txt
 ```
 
-Start app in development mode:
+Set flask environment variables and start app in development mode:
 
 ```
-FLASK_ENV=development python escape_me/app.py
+FLASK_ENV=development
+FLASK_APP=escape_me
+
+flask init-db
+flask run -h 0.0.0.0 -p 5000
 ```
