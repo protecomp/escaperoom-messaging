@@ -1,23 +1,8 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit, disconnect
+from flask_socketio import emit, disconnect
+from .. import socketio
 
 from logging import getLogger
-
 logger = getLogger(__name__)
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '12345678'
-socketio = SocketIO(app, async_mode="eventlet")
-
-
-@app.route('/')
-def index():
-    return render_template('index.html', async_mode=socketio.async_mode)
-
-
-@app.route('/player')
-def player_view():
-    return render_template('player.html', async_mode=socketio.async_mode)
 
 
 @socketio.on('hint_request')
@@ -60,6 +45,3 @@ def respond(message):
 @socketio.on('ping')
 def respond():
     emit('pong')
-
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0')
