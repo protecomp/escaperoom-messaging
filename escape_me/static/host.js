@@ -41,7 +41,7 @@ $(document).ready(function() {
     // to the client. The data is then displayed in the "Received"
     // section of the page.
     socket.on('my_response', function(msg) {
-        $('#log').append('<br>' + $('<div/>').text('Sent message: ' + msg.data).html());
+        log_entry(msg.event, msg.data);
     });
 
 
@@ -57,3 +57,16 @@ $(document).ready(function() {
         return false;
     });
 });
+
+function log_entry(event, data) {
+    if (event == undefined) {
+        event = "";
+    }
+    $('#log').append('<tr>'+
+        '<td>' + (new Date).toLocaleTimeString('fi-FI') + '</td>' +
+        '<td>' + event + '</td>' +
+        '<td>' + data + '</td>' +
+        '</tr>'
+    );
+
+}

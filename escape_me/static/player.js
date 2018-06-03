@@ -30,4 +30,8 @@ $(document).ready(function() {
         text_animate_loop = setInterval(text_animate, 100);
     });
 
+    $('#request_btn').on('click', function(event) {
+        socket.emit('hint_request');
+        console.log("hint_request")
+    });
 });
