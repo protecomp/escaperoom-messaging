@@ -4,55 +4,33 @@
     <title>Escape room messaging</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function() {
-
-            // Connect to the Socket.IO server.
-            var socket = io.connect();
-
-            // Event handler for new connections.
-            // The callback function is invoked when a connection with the
-            // server is established.
-            socket.on('connect', function() {
-                socket.emit('my_event', {data: 'I\'m connected!'});
-                console.log("Connected");
-            });
-            // Event handler for server sent data.
-            // The callback function is invoked whenever the server emits data
-            // to the client. The data is then displayed in the "Received"
-            // section of the page.
-            socket.on('my_response', function(msg) {
-                $('#log').append('<br>' + $('<div/>').text('Received message: ' + msg.data).html());
-            });
-
-
-            // Handlers for the different forms in the page.
-            // These accept data from the user and send it to the server in a
-            // variety of ways
-            $('form#emit').submit(function(event) {
-                socket.emit('my_message', {data: $('#emit_data').val()});
-                return false;
-            });
-            $('form#disconnect').submit(function(event) {
-                socket.emit('disconnect_request');
-                return false;
-            });
-        });
-    </script>
+    <script type="text/javascript" src="static/host.js"></script>
+    <style type="text/css">
+        #log {
+            font-family: monospace;
+        }
+        #log td, #log tr {
+            padding-left: 15px;
+        }
+    </style>
 </head>
 <body>
     <h1>Send message to escape room player</h1>
-    <p>Async mode is: <b>{{ async_mode }}</b></p>
+    <p>Async mode is: <b>{{ async_mode }}</b> (<span id="connection_status">Not Connected</span>)</p>
     <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
     <h2>Send:</h2>
     <form id="emit" method="POST" action='#'>
         <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>
-        <input type="submit" value="Lähetä">
-    </form>
-    <form id="disconnect" method="POST" action="#">
-        <input type="submit" value="Disconnect">
+        <br />
+        <input type="submit" disabled value="Lähetä">
     </form>
     <h2>Receive:</h2>
-    <div id="log"></div>
+    <table id="log">
+        <tr>
+          <th>Time</th>
+          <th>Event</th> 
+          <th>Data</th>
+        </tr>
+    </table>
 </body>
 </html>

@@ -2,42 +2,44 @@
 <html>
 <head>
     <title>Room view</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-        $(document).ready(function() {
-
-            // Connect to the Socket.IO server.
-            var socket = io.connect();
-
-            // Event handler for new connections.
-            // The callback function is invoked when a connection with the
-            // server is established.
-            socket.on('connect', function() {
-                socket.emit('my_event', {data: 'I\'m connected!'});
-                console.log("Connected");
-            });
-            // Event handler for server sent data.
-            // The callback function is invoked whenever the server emits data
-            // to the client. The data is then displayed in the "Received"
-            // section of the page.
-            socket.on('set_message', function(msg) {
-                $('#msg').text(msg['data']);
-            });
-
-        });
-    </script>
+    <script type="text/javascript" src="static/player.js"></script>
     <style type="text/css">
     body {
+        background: black;
+    }
+    #msg {
         font-size: 30px;
         /* font-variant: small-caps; */
         padding: 2em 10%;
-        background: black;
         color: greenyellow;
+    }
+    #request_btn {
+        font-size: 30px;
+        /* font-variant: small-caps; */
+        padding: 2em 10%;
+        color: greenyellow;
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: left;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        width: 185px;
+        cursor: pointer;
+    }
+    #request_btn:disabled {
+        background-color: rgba(76, 175, 79, 0.288);
+        color: rgba(255, 255, 255, 0.548);
+        cursor: default;
     }
     </style>
 </head>
 <body>
     <div id="msg"></div>
+    <button id="request_btn">Request a hint</button>
 </body>
 </html>
