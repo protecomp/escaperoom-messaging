@@ -2,20 +2,38 @@
 <html>
 <head>
     <title>Room view</title>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
     <script type="text/javascript" src="static/player.js"></script>
     <style type="text/css">
     body {
+        background: black;
+    }
+    #msg {
         font-size: 30px;
         /* font-variant: small-caps; */
         padding: 2em 10%;
-        background: black;
         color: greenyellow;
+    }
+    #request_btn {
+        font-size: 30px;
+        /* font-variant: small-caps; */
+        padding: 2em 10%;
+        color: greenyellow;
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+
     }
     </style>
 </head>
 <body>
     <div id="msg"></div>
+    <div id="request_btn">Request a hint</div>
 </body>
 </html>
