@@ -1,5 +1,6 @@
 from flask_socketio import emit, disconnect
 from .. import socketio
+from ..db import get_db
 
 from logging import getLogger
 logger = getLogger(__name__)
@@ -13,6 +14,17 @@ def hint_request():
 @socketio.on('hint_available')
 def hint_available():
     emit('hint_available')
+
+
+@socketio.on('hint_save')
+def hint_save(message):
+    db = get_db()
+    db.execute(
+        'INSERT INTO hint (body) VALUES (?)',
+        (message['data'], )
+    )
+    db.commit()
+    emit('my_response', {'event': 'hint save', 'data': message['data']})
 
 
 @socketio.on('my_message')

@@ -19,11 +19,10 @@
     <p>Async mode is: <b>{{ async_mode }}</b> (<span id="connection_status">Not Connected</span>)</p>
     <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
     <h2>Send:</h2>
-    <form id="emit" method="POST" action='#'>
-        <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>
-        <br />
-        <input type="submit" disabled value="Lähetä">
-    </form>
+    <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>
+    <br />
+    <button id="send_btn" disabled>Lähetä</button>
+    <button id="save_btn">Tallenna</button>
     <h2>Receive:</h2>
     <table id="log">
         <tr>

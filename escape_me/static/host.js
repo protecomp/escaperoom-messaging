@@ -43,10 +43,10 @@ $(document).ready(function() {
     socket.on('my_response', function(msg) {
         log_entry(msg.event, msg.data);
         if (msg.event === "hint request") {
-            $('form#emit input[type=submit]').removeAttr('disabled');
+            $('#send_btn').removeAttr('disabled');
         }
         if (msg.event === "hint set") {
-            $('form#emit input[type=submit]').attr('disabled', true);
+            $('#send_btn').attr('disabled', true);
         }
     });
 
@@ -54,16 +54,19 @@ $(document).ready(function() {
     // Handlers for the different forms in the page.
     // These accept data from the user and send it to the server in a
     // variety of ways
-    $('form#emit').submit(function(event) {
+    $('#send_btn').click(function(event) {
         let val = $('#emit_data').val();
         if (val.length > 0) {
             socket.emit('my_message', {data: $('#emit_data').val()});
         }
-        return false;
     });
-    $('form#disconnect').submit(function(event) {
-        socket.emit('disconnect_request');
-        return false;
+
+
+    $('#save_btn').click(function(event) {
+        let val = $('#emit_data').val();
+        if (val.length > 0) {
+            socket.emit('hint_save', {data: $('#emit_data').val()});
+        }
     });
 });
 
