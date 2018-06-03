@@ -9,7 +9,9 @@ $(document).ready(function() {
         var new_char = message.charAt($('#msg').text().length)
         $('#msg').text($('#msg').text() + new_char)
         if (message.length == $('#msg').text().length) {
+            console.log("Done animating!");
             clearInterval(text_animate_loop);
+            $('#request_btn').removeAttr('disabled');
         }
     }
 
@@ -29,10 +31,37 @@ $(document).ready(function() {
         message = msg['data'];
         clearInterval(text_animate_loop);
         text_animate_loop = setInterval(text_animate, 100);
+        animate_hint_requested(false);
+    });
+
+    socket.on('my_response', function(msg) {
+        if (msg.event === 'hint request') {
+            animate_hint_requested(true);
+        }
     });
 
     $('#request_btn').on('click', function(event) {
+        $('#request_btn').attr('disabled', true);
         socket.emit('hint_request');
         console.log("hint_request")
     });
 });
+
+hint_requested_loop = null;
+function animate_hint_requested(start_stop) {
+    if (start_stop) {
+        $('#request_btn').text('Hint requested');
+        hint_requested_loop = setInterval(function () {
+            let new_label = $('#request_btn').text();
+            if (new_label.length < 'Hint requested...'.length) {
+                new_label += ".";
+            } else {
+                new_label = 'Hint requested'
+            }
+            $('#request_btn').text(new_label);
+        }, 500)
+    } else {
+        $('#request_btn').text('Request a hint');
+        clearInterval(hint_requested_loop);
+    }
+}

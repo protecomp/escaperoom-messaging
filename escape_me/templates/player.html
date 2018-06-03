@@ -24,16 +24,22 @@
         border: none;
         color: white;
         padding: 15px 32px;
-        text-align: center;
+        text-align: left;
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-
+        width: 185px;
+        cursor: pointer;
+    }
+    #request_btn:disabled {
+        background-color: rgba(76, 175, 79, 0.288);
+        color: rgba(255, 255, 255, 0.548);
+        cursor: default;
     }
     </style>
 </head>
 <body>
     <div id="msg"></div>
-    <div id="request_btn">Request a hint</div>
+    <button id="request_btn">Request a hint</button>
 </body>
 </html>
