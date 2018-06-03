@@ -1,7 +1,9 @@
+var socket;
+
 $(document).ready(function() {
 
     // Connect to the Socket.IO server.
-    var socket = io.connect();
+    socket = io.connect();
 
     // Set a ping loop and pong event handler
     var TIMEOUT_MS = 5000;
@@ -74,6 +76,7 @@ $(document).ready(function() {
             socket.emit('hint_save', {data: $('#emit_data').val()});
         }
     });
+    $('#db_delete_btn').click(handle_database_delete);
 });
 
 function log_entry(event, data) {
@@ -93,10 +96,11 @@ function update_database_table(rows) {
     $('#database tr.table_row').remove();
     rows.forEach(element => {
         $('#database').append(
-            '<tr class="table_row">' +
+            '<tr class="table_row" row_id="'+ element.id +'">' +
+            '<td>' + '<input class="hint_delete" type="checkbox">' + '</td>' +
             '<td>' + '<button>+</button>' + '</td>' +
             '<td>' + '' + '</td>' +
-            '<td class="hint_body">' + element + '</td>' +
+            '<td class="hint_body">' + element.body + '</td>' +
             '</tr>'
         )
     });
@@ -104,4 +108,17 @@ function update_database_table(rows) {
         let body = $(event.target).parents('.table_row').children('.hint_body');
         $('#emit_data').val(body.html())
     });
+}
+
+function handle_database_delete(event) {
+    to_remove = [];
+    $('#database tr.table_row').each((i, element) => {
+        if ($(element).find('.hint_delete').attr('checked')) {
+            to_remove.push($(element).attr('row_id'));
+        }
+    });
+    if (to_remove.length > 0) {
+        socket.emit('hint_delete', {data: to_remove});
+    }
+    console.log(to_remove);
 }

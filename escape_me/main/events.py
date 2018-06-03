@@ -8,13 +8,17 @@ logger = getLogger(__name__)
 
 def broadcast_database():
     db = get_db()
-    all_hints = [row['body'] for row in db.execute('SELECT body FROM hint').fetchall()]
+    all_hints = [
+        {'body': row['body'], 'id': row['id']}
+        for row in db.execute('SELECT id, body FROM hint').fetchall()
+    ]
     emit('my_response', {'event': 'database', 'data': all_hints}, broadcast=True)
 
 
 @socketio.on('hint_request')
 def hint_request():
-    emit('my_response', {'event': 'hint request', 'data': "Hint requested by player"}, broadcast=True)
+    emit('my_response', {'event': 'hint request', 'data': "Hint requested by player"},
+         broadcast=True)
 
 
 @socketio.on('hint_available')
@@ -28,6 +32,18 @@ def hint_save(message):
     db.execute(
         'INSERT INTO hint (body) VALUES (?)',
         (message['data'], )
+    )
+    db.commit()
+    broadcast_database()
+
+
+@socketio.on('hint_delete')
+def hint_delete(to_delete):
+    to_delete_str = ", ".join(to_delete['data'])
+    print("DELETING: %s" % to_delete_str)
+    db = get_db()
+    db.execute(
+        'DELETE FROM hint WHERE id IN ( {} )'.format(to_delete_str)
     )
     db.commit()
     broadcast_database()
