@@ -32,7 +32,7 @@ $(document).ready(function() {
     // The callback function is invoked when a connection with the
     // server is established.
     socket.on('connect', function() {
-        socket.emit('my_event', {data: 'I\'m connected!'});
+        socket.emit('my_event', {data: 'Host connected!'});
         $('#connection_status').text("Connected")
         console.log("Connected");
     });

@@ -35,8 +35,18 @@ $(document).ready(function() {
     });
 
     socket.on('my_response', function(msg) {
+        console.log(msg)
         if (msg.event === 'hint request') {
             animate_hint_requested(true);
+        }
+        if (msg.event === 'connection') {
+            if (msg.data.toLowerCase().indexOf('host') > -1) {
+                // Host has reconnected, so they don't have our request any more.
+                // Send the request again if necessary.
+                if (hint_requested_loop !== null) {
+                    socket.emit('hint_request');
+                }
+            }
         }
     });
 
@@ -49,8 +59,13 @@ $(document).ready(function() {
 
 hint_requested_loop = null;
 function animate_hint_requested(start_stop) {
+    // Stop the loop first.
+    $('#request_btn').text('Request a hint');
+    clearInterval(hint_requested_loop);
+    hint_requested_loop = null;
     if (start_stop) {
         $('#request_btn').text('Hint requested');
+        // Start a loop that animates three dots
         hint_requested_loop = setInterval(function () {
             let new_label = $('#request_btn').text();
             if (new_label.length < 'Hint requested...'.length) {
@@ -60,8 +75,5 @@ function animate_hint_requested(start_stop) {
             }
             $('#request_btn').text(new_label);
         }, 500)
-    } else {
-        $('#request_btn').text('Request a hint');
-        clearInterval(hint_requested_loop);
     }
 }

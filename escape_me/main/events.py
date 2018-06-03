@@ -39,7 +39,7 @@ def disconnect_request():
 
 @socketio.on('my_event')
 def respond(message):
-    emit('my_response', {'event': 'connection', 'data': message['data']})
+    emit('my_response', {'event': 'connection', 'data': message['data']}, broadcast=True)
 
 
 @socketio.on('ping')
