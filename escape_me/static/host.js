@@ -4,16 +4,28 @@ $(document).ready(function() {
     var socket = io.connect();
 
     // Set a ping loop and pong event handler
-    var ping_time = 0;
+    var TIMEOUT_MS = 5000;
+    var ping_time = -1;
+    var last_reponse = -1;
     var ping_loop = setInterval(function() {
         socket.emit('ping');
-        ping_time = (new Date()).getTime();
+        if (ping_time === -1) {
+            ping_time = (new Date()).getTime();
+        } else {
+            update_ping();
+            $('#connection_status').text("Connection lost")
+        }
     }, 1000)
+    function update_ping() {
+        time_diff = (new Date()).getTime() - ping_time;
+        $('#ping-pong').text(time_diff);
+    }
     socket.on('pong', function() {
-        time_diff = (new Date()).getTime() - ping_time
-        curr_ping = parseInt($('#ping-pong').text());
-        if (isNaN(curr_ping)) { curr_ping = 0; }
-        $('#ping-pong').text(Math.floor((curr_ping + time_diff)/2));
+        $('#connection_status').text("Connected")
+        if (ping_time !== -1) {
+            update_ping();
+        }
+        ping_time = -1;
     });
 
     // Event handler for new connections.
@@ -21,6 +33,7 @@ $(document).ready(function() {
     // server is established.
     socket.on('connect', function() {
         socket.emit('my_event', {data: 'I\'m connected!'});
+        $('#connection_status').text("Connected")
         console.log("Connected");
     });
     // Event handler for server sent data.
