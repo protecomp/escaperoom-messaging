@@ -6,6 +6,12 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
+def broadcast_database():
+    db = get_db()
+    all_hints = [row['body'] for row in db.execute('SELECT body FROM hint').fetchall()]
+    emit('my_response', {'event': 'database', 'data': all_hints}, broadcast=True)
+
+
 @socketio.on('hint_request')
 def hint_request():
     emit('my_response', {'event': 'hint request', 'data': "Hint requested by player"}, broadcast=True)
@@ -24,7 +30,7 @@ def hint_save(message):
         (message['data'], )
     )
     db.commit()
-    emit('my_response', {'event': 'hint save', 'data': message['data']})
+    broadcast_database()
 
 
 @socketio.on('my_message')
@@ -36,6 +42,7 @@ def send_hint(message):
 @socketio.on('connect')
 def client_connected():
     print("Client connected")
+    broadcast_database()
 
 
 @socketio.on('disconnect')

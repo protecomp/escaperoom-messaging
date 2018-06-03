@@ -41,6 +41,12 @@ $(document).ready(function() {
     // to the client. The data is then displayed in the "Received"
     // section of the page.
     socket.on('my_response', function(msg) {
+        console.log(msg);
+        if (msg.event === "database") {
+            log_entry(msg.event, "received " + msg.data.length + " rows");
+            update_database_table(msg.data);
+            return;
+        }
         log_entry(msg.event, msg.data);
         if (msg.event === "hint request") {
             $('#send_btn').removeAttr('disabled');
@@ -81,4 +87,21 @@ function log_entry(event, data) {
         '</tr>'
     );
 
+}
+
+function update_database_table(rows) {
+    $('#database tr.table_row').remove();
+    rows.forEach(element => {
+        $('#database').append(
+            '<tr class="table_row">' +
+            '<td>' + '<button>+</button>' + '</td>' +
+            '<td>' + '' + '</td>' +
+            '<td class="hint_body">' + element + '</td>' +
+            '</tr>'
+        )
+    });
+    $('#database tr.table_row button').click(function(event){
+        let body = $(event.target).parents('.table_row').children('.hint_body');
+        $('#emit_data').val(body.html())
+    });
 }

@@ -15,6 +15,8 @@
     </style>
 </head>
 <body>
+<table><tr>
+<td>
     <h1>Send message to escape room player</h1>
     <p>Async mode is: <b>{{ async_mode }}</b> (<span id="connection_status">Not Connected</span>)</p>
     <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
@@ -31,5 +33,17 @@
           <th>Data</th>
         </tr>
     </table>
+</td>
+<td>
+    <table id="database">
+        <tr class="table_header">
+            <th></th>
+            <th>Room</th>
+            <th>Body</th> 
+        </tr>
+    </table>
+</td>
+</tr>
+</table>
 </body>
 </html>
