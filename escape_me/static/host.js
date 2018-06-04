@@ -72,6 +72,7 @@ $(document).ready(function() {
         }
         log_entry(msg.event, msg.data);
         if (msg.event === "hint request") {
+            notifyHintRequested();
             $('#send_btn').removeAttr('disabled');
         }
         if (msg.event === "hint set") {
@@ -142,4 +143,37 @@ function handle_database_delete(event) {
         socket.emit('hint_delete', {data: to_remove});
     }
     console.log(to_remove);
+}
+
+function enable_notifications() {
+    
+    if (!Notification) {
+        $('#notification_status').text("Desktop notifications not available in your browser. Try Chrome.");
+        return;
+    }
+
+    if (Notification.permission !== "granted")
+        Notification.requestPermission().then(function(result) {
+            if (result === "granted") {
+                $('#notification_status').text("Enabled");
+                console.log("Notifications enabled");
+            } else {
+                $('#notification_status').text("Disabled");
+                console.log("Notifications disabled");
+            }
+        });
+
+}
+document.addEventListener('DOMContentLoaded', enable_notifications);
+
+function notifyHintRequested() {
+    if (Notification.permission === "granted") {
+        var notification = new Notification('Player requested a hint!', {
+          body: "Hint request from room ###",
+        });
+
+        notification.onclick = function () {
+          window.open(window.location.href);      
+        };
+    }
 }
