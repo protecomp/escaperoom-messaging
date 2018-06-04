@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import socketIOClient from 'socket.io-client'
-import './App.css';
 
-class App extends Component {
+class Player extends Component {
   constructor() {
     super()
     
@@ -39,9 +38,9 @@ class App extends Component {
     })
     return (
       <div style={{ textAlign: "center" }}>
-        <button onClick={() => this.send()}>Change Color</button>
+        <button onClick={() => this.send()}>Change Color (Player)</button>
       </div>
     )
   }
 }
-export default App;
+export default Player;
