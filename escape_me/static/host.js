@@ -1,7 +1,9 @@
+var socket;
+
 $(document).ready(function() {
 
     // Connect to the Socket.IO server.
-    var socket = io.connect();
+    socket = io.connect();
 
     // Set a ping loop and pong event handler
     var TIMEOUT_MS = 5000;
@@ -62,12 +64,18 @@ $(document).ready(function() {
     // to the client. The data is then displayed in the "Received"
     // section of the page.
     socket.on('my_response', function(msg) {
+        console.log(msg);
+        if (msg.event === "database") {
+            log_entry(msg.event, "received " + msg.data.length + " rows");
+            update_database_table(msg.data);
+            return;
+        }
         log_entry(msg.event, msg.data);
         if (msg.event === "hint request") {
-            $('form#emit input[type=submit]').removeAttr('disabled');
+            $('#send_btn').removeAttr('disabled');
         }
         if (msg.event === "hint set") {
-            $('form#emit input[type=submit]').attr('disabled', true);
+            $('#send_btn').attr('disabled', true);
         }
     });
 
@@ -75,17 +83,21 @@ $(document).ready(function() {
     // Handlers for the different forms in the page.
     // These accept data from the user and send it to the server in a
     // variety of ways
-    $('form#emit').submit(function(event) {
+    $('#send_btn').click(function(event) {
         let val = $('#emit_data').val();
         if (val.length > 0) {
             socket.emit('my_message', {data: $('#emit_data').val()});
         }
-        return false;
     });
-    $('form#disconnect').submit(function(event) {
-        socket.emit('disconnect_request');
-        return false;
+
+
+    $('#save_btn').click(function(event) {
+        let val = $('#emit_data').val();
+        if (val.length > 0) {
+            socket.emit('hint_save', {data: $('#emit_data').val()});
+        }
     });
+    $('#db_delete_btn').click(handle_database_delete);
 });
 
 function log_entry(event, data) {
@@ -99,4 +111,35 @@ function log_entry(event, data) {
         '</tr>'
     );
 
+}
+
+function update_database_table(rows) {
+    $('#database tr.table_row').remove();
+    rows.forEach(element => {
+        $('#database').append(
+            '<tr class="table_row" row_id="'+ element.id +'">' +
+            '<td>' + '<input class="hint_delete" type="checkbox">' + '</td>' +
+            '<td>' + '<button>+</button>' + '</td>' +
+            '<td>' + '' + '</td>' +
+            '<td class="hint_body">' + element.body + '</td>' +
+            '</tr>'
+        )
+    });
+    $('#database tr.table_row button').click(function(event){
+        let body = $(event.target).parents('.table_row').children('.hint_body');
+        $('#emit_data').val(body.html())
+    });
+}
+
+function handle_database_delete(event) {
+    to_remove = [];
+    $('#database tr.table_row').each((i, element) => {
+        if ($(element).find('.hint_delete').attr('checked')) {
+            to_remove.push($(element).attr('row_id'));
+        }
+    });
+    if (to_remove.length > 0) {
+        socket.emit('hint_delete', {data: to_remove});
+    }
+    console.log(to_remove);
 }
