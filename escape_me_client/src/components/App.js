@@ -106,6 +106,11 @@ class App extends Component {
         this.setState({text_value: event.target.value})
     }
 
+    save_hint = () => {
+        if (this.state.text_value.length > 0) {
+            this.socket.emit('hint_save', {data: this.state.text_value});
+        }
+    }
     // render method that renders in code if the state is updated
     render() {
         return (
@@ -117,13 +122,13 @@ class App extends Component {
                     <table><tr>
                         <td>
                             <h1>Send message to escape room player</h1>
-                            <p>Async mode is: <b></b> (<span id="connection_status">{this.state.connection_status}</span>)</p>
-                            <p>Average ping/pong latency: <b><span id="ping-pong">{this.state.ping_diff}</span>ms</b></p>
+                            <p>Async mode is: <b></b> (<span>{this.state.connection_status}</span>)</p>
+                            <p>Average ping/pong latency: <b><span>{this.state.ping_diff}</span>ms</b></p>
                             <h2>Send:</h2>
-                            <textarea cols="60" rows="5" id="emit_data" name="emit_data" value={this.state.text_value} onChange={this.text_handleChange}></textarea>
+                            <textarea cols="60" rows="5" value={this.state.text_value} onChange={this.text_handleChange}></textarea>
                             <br />
-                            <button id="send_btn" onClick={this.send_hint} disabled={!this.state.hint_requested}>Lähetä</button>
-                            <button id="save_btn">Tallenna</button>
+                            <button onClick={this.send_hint} disabled={!this.state.hint_requested}>Lähetä</button>
+                            <button onClick={this.save_hint}>Tallenna</button>
                             <h2>Receive:</h2>
                             <table id="log">
                                 <tr>
