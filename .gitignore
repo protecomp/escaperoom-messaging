@@ -105,3 +105,4 @@ venv.bak/
 
 # custom
 db.sqlite
+node_modules
