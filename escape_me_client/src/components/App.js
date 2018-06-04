@@ -7,24 +7,49 @@ class App extends Component {
     super()
     
     this.state = {
-      endpoint: "http://localhost:5000" // this is where we are connecting to with sockets
+      endpoint: "http://localhost:5000", // this is where we are connecting to with sockets
+      ping_time: -1,
+      ping_diff: -1,
     }
     this.socket = socketIOClient(this.state.endpoint)
 
+    }
+
+    componentDidMount() {
         // Set a ping loop and pong event handler
     this.TIMEOUT_MS = 5000;
     this.ping_time = -1;
     this.last_reponse = -1;
     this.ping_loop = setInterval(() => {
-        this.socket.emit('ping');
-        if (this.ping_time === -1) {
-            this.ping_time = (new Date()).getTime();
-        } else {
-            this.update_ping();
-            //$('#connection_status').text("Connection lost")
-        }
+        this.socket.emit('my_ping');
+        this.state.ping_time = (new Date).getTime();
     }, 1000)
 
+    this.socket.on('my_pong', () =>  {
+        this.setState({ping_diff: (new Date).getTime() - this.state.ping_time});
+    });
+    
+    this.socket.on('connect', () => {
+        this.socket.emit('my_event', {data: 'Host connected!'});
+        //$('#connection_status').text("Connected")
+        console.log("Connected");
+    });
+    
+    this.socket.on('my_response', (msg) => {
+        console.log(msg);
+        if (msg.event === "database") {
+            this.log_entry(msg.event, "received " + msg.data.length + " rows");
+            this.update_database_table(msg.data);
+            return;
+        }
+        this.log_entry(msg.event, msg.data);
+        if (msg.event === "hint request") {
+            //$('#send_btn').removeAttr('disabled');
+        }
+        if (msg.event === "hint set") {
+            //$('#send_btn').attr('disabled', true);
+        }
+    });
   }
   
   // method for emitting a socket.io event
@@ -36,11 +61,6 @@ class App extends Component {
     this.socket.emit('my_message', {data: 'react message'}) 
     // socket.emit('change color', 'red', 'yellow') | you can have multiple arguments
   }
-
-    update_ping = () => {
-        const time_diff = (new Date()).getTime() - this.ping_time;
-        //$('#ping-pong').text(time_diff);
-    }
 
     log_entry = (event, data) => {
         if (event === undefined) {
@@ -87,44 +107,8 @@ class App extends Component {
     }
   // render method that renders in code if the state is updated
   render() {
-    
 
-    
-    this.socket.on('pong', () =>  {
-    //$('#connection_status').text("Connected")
-    if (this.ping_time !== -1) {
-        this.update_ping();
-    }
-    this.ping_time = -1;
-    });
 
-    // Event handler for new connections.
-    // The callback function is invoked when a connection with the
-    // server is established.
-    this.socket.on('connect', () => {
-        this.socket.emit('my_event', {data: 'Host connected!'});
-        //$('#connection_status').text("Connected")
-        console.log("Connected");
-    });
-    // Event handler for server sent data.
-    // The callback function is invoked whenever the server emits data
-    // to the client. The data is then displayed in the "Received"
-    // section of the page.
-    this.socket.on('my_response', (msg) => {
-        console.log(msg);
-        if (msg.event === "database") {
-            this.log_entry(msg.event, "received " + msg.data.length + " rows");
-            this.update_database_table(msg.data);
-            return;
-        }
-        this.log_entry(msg.event, msg.data);
-        if (msg.event === "hint request") {
-            //$('#send_btn').removeAttr('disabled');
-        }
-        if (msg.event === "hint set") {
-            //$('#send_btn').attr('disabled', true);
-        }
-    });
     return (
       <html>
       <head>
@@ -135,7 +119,7 @@ class App extends Component {
       <td>
           <h1>Send message to escape room player</h1>
           <p>Async mode is: <b></b> (<span id="connection_status">Not Connected</span>)</p>
-          <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
+          <p>Average ping/pong latency: <b><span id="ping-pong">{ this.state.ping_diff }</span>ms</b></p>
           <h2>Send:</h2>
           <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>
           <br />

@@ -77,6 +77,7 @@ def respond(message):
     emit('my_response', {'event': 'connection', 'data': message['data']}, broadcast=True)
 
 
-@socketio.on('ping')
-def respond():
-    emit('pong')
+@socketio.on('my_ping')
+def my_ping():
+    print("ping")
+    emit('my_pong')
