@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import socketIOClient from 'socket.io-client'
+import '../css/Player.css';
 
 class Player extends Component {
   constructor() {
@@ -37,9 +38,15 @@ class Player extends Component {
       console.log(message)
     })
     return (
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => this.send()}>Change Color (Player)</button>
-      </div>
+    <html id="player_component">
+    <head>
+        <title>Room view</title>
+    </head>
+    <body>
+        <div id="msg"></div>
+        <button id="request_btn">Request a hint</button>
+    </body>
+    </html>
     )
   }
 }

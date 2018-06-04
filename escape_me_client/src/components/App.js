@@ -38,9 +38,44 @@ class App extends Component {
       console.log(message)
     })
     return (
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => this.send()}>Change Color</button>
-      </div>
+      <html>
+      <head>
+          <title>Escape room messaging</title>
+      </head>
+      <body>
+      <table><tr>
+      <td>
+          <h1>Send message to escape room player</h1>
+          <p>Async mode is: <b></b> (<span id="connection_status">Not Connected</span>)</p>
+          <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
+          <h2>Send:</h2>
+          <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>
+          <br />
+          <button id="send_btn" disabled>Lähetä</button>
+          <button id="save_btn">Tallenna</button>
+          <h2>Receive:</h2>
+          <table id="log">
+              <tr>
+                <th>Time</th>
+                <th>Event</th> 
+                <th>Data</th>
+              </tr>
+          </table>
+      </td>
+      <td>
+          <table id="database">
+              <tr class="table_header">
+                  <th><button id="db_delete_btn">Delete</button></th>
+                  <th></th>
+                  <th>Room</th>
+                  <th>Body</th> 
+              </tr>
+          </table>
+      </td>
+      </tr>
+      </table>
+      </body>
+      </html>
     )
   }
 }
