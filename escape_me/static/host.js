@@ -67,16 +67,16 @@ $(document).ready(function() {
         console.log(msg);
         if (msg.event === "database") {
             log_entry(msg.event, "received " + msg.data.length + " rows");
-            update_database_table(msg.data);
+            update_database_table(msg.data.all_hints);
+            set_hint_requested(msg.data.state.hint_requested);
             return;
         }
         log_entry(msg.event, msg.data);
         if (msg.event === "hint request") {
-            $('#hint_requested').html("true");
-            notifyHintRequested();
+            set_hint_requested(true);
         }
         if (msg.event === "hint set") {
-            $('#hint_requested').html("false");
+            set_hint_requested(false);
         }
     });
 
@@ -100,6 +100,15 @@ $(document).ready(function() {
     });
     $('#db_delete_btn').click(handle_database_delete);
 });
+
+function set_hint_requested(on_off) {
+    if (on_off) {
+        $('#hint_requested').html("true");
+        notifyHintRequested();
+    } else {
+        $('#hint_requested').html("false");
+    }
+}
 
 function log_entry(event, data) {
     if (event == undefined) {

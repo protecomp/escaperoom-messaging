@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS hint;
 DROP TABLE IF EXISTS room;
+DROP TABLE IF EXISTS state;
 
 CREATE TABLE hint (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,3 +19,7 @@ CREATE TABLE room (
   description TEXT NOT NULL
 );
 
+
+CREATE TABLE state (
+  hint_requested INTEGER DEFAULT 0
+);

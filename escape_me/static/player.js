@@ -43,15 +43,6 @@ $(document).ready(function() {
         if (msg.event === 'hint request') {
             animate_hint_requested(true);
         }
-        if (msg.event === 'connection') {
-            if (msg.data.toLowerCase().indexOf('host') > -1) {
-                // Host has reconnected, so they don't have our request any more.
-                // Send the request again if necessary.
-                if (hint_requested_loop !== null) {
-                    socket.emit('hint_request');
-                }
-            }
-        }
     });
 
     $('#request_btn').on('click', function(event) {
