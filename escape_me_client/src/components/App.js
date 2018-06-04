@@ -10,6 +10,21 @@ class App extends Component {
       endpoint: "http://localhost:5000" // this is where we are connecting to with sockets
     }
     this.socket = socketIOClient(this.state.endpoint)
+
+        // Set a ping loop and pong event handler
+    this.TIMEOUT_MS = 5000;
+    this.ping_time = -1;
+    this.last_reponse = -1;
+    this.ping_loop = setInterval(() => {
+        this.socket.emit('ping');
+        if (this.ping_time === -1) {
+            this.ping_time = (new Date()).getTime();
+        } else {
+            this.update_ping();
+            //$('#connection_status').text("Connection lost")
+        }
+    }, 1000)
+
   }
   
   // method for emitting a socket.io event
@@ -21,22 +36,95 @@ class App extends Component {
     this.socket.emit('my_message', {data: 'react message'}) 
     // socket.emit('change color', 'red', 'yellow') | you can have multiple arguments
   }
-  
+
+    update_ping = () => {
+        const time_diff = (new Date()).getTime() - this.ping_time;
+        //$('#ping-pong').text(time_diff);
+    }
+
+    log_entry = (event, data) => {
+        if (event === undefined) {
+            event = "";
+        }
+        // $('#log').append('<tr>'+
+        //     '<td>' + (new Date).toLocaleTimeString('fi-FI') + '</td>' +
+        //     '<td>' + event + '</td>' +
+        //     '<td>' + data + '</td>' +
+        //     '</tr>'
+        // );
+    
+    }
+    
+    update_database_table = (rows) => {
+        // $('#database tr.table_row').remove();
+        // rows.forEach(element => {
+        //     // $('#database').append(
+        //     //     '<tr class="table_row" row_id="'+ element.id +'">' +
+        //     //     '<td>' + '<input class="hint_delete" type="checkbox">' + '</td>' +
+        //     //     '<td>' + '<button>+</button>' + '</td>' +
+        //     //     '<td>' + '' + '</td>' +
+        //     //     '<td class="hint_body">' + element.body + '</td>' +
+        //     //     '</tr>'
+        //     // )
+        // });
+        // $('#database tr.table_row button').click(function(event){
+        //     let body = $(event.target).parents('.table_row').children('.hint_body');
+        //     //$('#emit_data').val(body.html())
+        // });
+    }
+    
+    handle_database_delete = (event) => {
+        let to_remove = [];
+        // $('#database tr.table_row').each((i, element) => {
+        //     if ($(element).find('.hint_delete').attr('checked')) {
+        //         to_remove.push($(element).attr('row_id'));
+        //     }
+        // });
+        if (to_remove.length > 0) {
+            this.socket.emit('hint_delete', {data: to_remove});
+        }
+        console.log(to_remove);
+    }
   // render method that renders in code if the state is updated
   render() {
     
-    // socket.on is another method that checks for incoming events from the server
-    // This method is looking for the event 'change color'
-    // socket.on takes a callback function for the first argument
-    this.socket.on('my_response', (message) => {
-      // setting the color of our button
-      console.log(message)
-    })
-    this.socket.on('connect', (message) => {
-      // setting the color of our button
-      this.socket.emit('my_event', {data: 'Host connected!'});
-      console.log(message)
-    })
+
+    
+    this.socket.on('pong', () =>  {
+    //$('#connection_status').text("Connected")
+    if (this.ping_time !== -1) {
+        this.update_ping();
+    }
+    this.ping_time = -1;
+    });
+
+    // Event handler for new connections.
+    // The callback function is invoked when a connection with the
+    // server is established.
+    this.socket.on('connect', () => {
+        this.socket.emit('my_event', {data: 'Host connected!'});
+        //$('#connection_status').text("Connected")
+        console.log("Connected");
+    });
+    // Event handler for server sent data.
+    // The callback function is invoked whenever the server emits data
+    // to the client. The data is then displayed in the "Received"
+    // section of the page.
+    this.socket.on('my_response', (msg) => {
+        console.log(msg);
+        if (msg.event === "database") {
+            this.log_entry(msg.event, "received " + msg.data.length + " rows");
+            this.update_database_table(msg.data);
+            return;
+        }
+        this.log_entry(msg.event, msg.data);
+        if (msg.event === "hint request") {
+            //$('#send_btn').removeAttr('disabled');
+        }
+        if (msg.event === "hint set") {
+            //$('#send_btn').attr('disabled', true);
+        }
+    });
     return (
       <html>
       <head>
