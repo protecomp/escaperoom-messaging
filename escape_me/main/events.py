@@ -43,5 +43,15 @@ def respond(message):
 
 
 @socketio.on('ping')
-def respond():
+def respond_ping():
     emit('pong')
+
+
+@socketio.on('player_ping')
+def broadcast_ping():
+    emit('player_ping', broadcast=True)
+
+
+@socketio.on('player_pong')
+def broadcast_pong():
+    emit('player_pong', broadcast=True)

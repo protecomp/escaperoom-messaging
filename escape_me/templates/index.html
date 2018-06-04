@@ -16,8 +16,14 @@
 </head>
 <body>
     <h1>Send message to escape room player</h1>
-    <p>Async mode is: <b>{{ async_mode }}</b> (<span id="connection_status">Not Connected</span>)</p>
-    <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
+    <p>
+        Async mode is: <b>{{ async_mode }}</b> (<span id="connection_status">Not Connected</span>)<br>
+        Average ping/pong latency: <b><span id="ping-pong"></span> ms</b>
+    </p>
+    <p>
+        Player connection status: <span id="player_connection_status">Player not connected</span><br>
+        Player view latency: <b><span id="player-ping-pong">-</span> ms</b>
+    </p>
     <h2>Send:</h2>
     <form id="emit" method="POST" action='#'>
         <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>

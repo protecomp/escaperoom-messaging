@@ -15,11 +15,15 @@ $(document).ready(function() {
         }
     }
 
+    socket.on('player_ping', function() {
+        socket.emit('player_pong');
+    });
+
     // Event handler for new connections.
     // The callback function is invoked when a connection with the
     // server is established.
     socket.on('connect', function() {
-        socket.emit('my_event', {data: 'I\'m connected!'});
+        socket.emit('my_event', {data: 'Player connected!'});
         console.log("Connected");
     });
     // Event handler for server sent data.
