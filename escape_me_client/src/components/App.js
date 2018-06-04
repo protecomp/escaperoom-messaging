@@ -52,16 +52,6 @@ class App extends Component {
         });
     }
 
-    // method for emitting a socket.io event
-    send = () => {
-        // this emits an event to the socket (your server) with an argument of 'red'
-        // you can make the argument any color you would like, or any kind of data you want to send.
-
-        console.log("sending")
-        this.socket.emit('my_message', { data: 'react message' })
-        // socket.emit('change color', 'red', 'yellow') | you can have multiple arguments
-    }
-
     log_entry = (event, data) => {
         if (event === undefined) {
             event = "";
@@ -118,8 +108,6 @@ class App extends Component {
 
     // render method that renders in code if the state is updated
     render() {
-        {}
-
         return (
             <html>
                 <head>
