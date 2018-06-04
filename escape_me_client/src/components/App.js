@@ -10,6 +10,8 @@ class App extends Component {
             endpoint: "http://localhost:5000", // this is where we are connecting to with sockets
             ping_time: -1,
             ping_diff: -1,
+            connection_status: 'Not Connected',
+            text_value: '',
         }
         this.socket = socketIOClient(this.state.endpoint)
 
@@ -17,9 +19,6 @@ class App extends Component {
 
     componentDidMount() {
         // Set a ping loop and pong event handler
-        this.TIMEOUT_MS = 5000;
-        this.ping_time = -1;
-        this.last_reponse = -1;
         this.ping_loop = setInterval(() => {
             this.socket.emit('my_ping');
             this.state.ping_time = (new Date).getTime();
@@ -32,6 +31,7 @@ class App extends Component {
         this.socket.on('connect', () => {
             this.socket.emit('my_event', { data: 'Host connected!' });
             //$('#connection_status').text("Connected")
+            this.setState({connection_status: 'Connected'})
             console.log("Connected");
         });
 
@@ -44,10 +44,10 @@ class App extends Component {
             }
             this.log_entry(msg.event, msg.data);
             if (msg.event === "hint request") {
-                //$('#send_btn').removeAttr('disabled');
+                this.setState({hint_requested: true});
             }
             if (msg.event === "hint set") {
-                //$('#send_btn').attr('disabled', true);
+                this.setState({hint_requested: false});
             }
         });
     }
@@ -105,9 +105,20 @@ class App extends Component {
         }
         console.log(to_remove);
     }
+
+    send_hint = () => {
+        if (this.state.text_value.length > 0) {
+            this.socket.emit('my_message', {data: this.state.text_value});
+        }
+    }
+
+    text_handleChange = (event) => {
+        this.setState({text_value: event.target.value})
+    }
+
     // render method that renders in code if the state is updated
     render() {
-
+        {}
 
         return (
             <html>
@@ -118,12 +129,12 @@ class App extends Component {
                     <table><tr>
                         <td>
                             <h1>Send message to escape room player</h1>
-                            <p>Async mode is: <b></b> (<span id="connection_status">Not Connected</span>)</p>
+                            <p>Async mode is: <b></b> (<span id="connection_status">{this.state.connection_status}</span>)</p>
                             <p>Average ping/pong latency: <b><span id="ping-pong">{this.state.ping_diff}</span>ms</b></p>
                             <h2>Send:</h2>
-                            <textarea cols="60" rows="5" id="emit_data" name="emit_data"></textarea>
+                            <textarea cols="60" rows="5" id="emit_data" name="emit_data" value={this.state.text_value} onChange={this.text_handleChange}></textarea>
                             <br />
-                            <button id="send_btn" disabled>Lähetä</button>
+                            <button id="send_btn" onClick={this.send_hint} disabled={!this.state.hint_requested}>Lähetä</button>
                             <button id="save_btn">Tallenna</button>
                             <h2>Receive:</h2>
                             <table id="log">

@@ -7,7 +7,8 @@ class Player extends Component {
         super()
 
         this.state = {
-            endpoint: "http://localhost:5000" // this is where we are connecting to with sockets
+            endpoint: "http://localhost:5000", // this is where we are connecting to with sockets
+            hint_requested: false,
         }
         this.socket = socketIOClient(this.state.endpoint)
     }
@@ -20,6 +21,12 @@ class Player extends Component {
         console.log("sending")
         this.socket.emit('my_message', { data: 'react message' })
         // socket.emit('change color', 'red', 'yellow') | you can have multiple arguments
+    }
+
+    request_hint = () => {
+        this.setState({hint_requested: true});
+        this.socket.emit('hint_request');
+        console.log("hint_request")
     }
 
     // render method that renders in code if the state is updated
@@ -44,7 +51,7 @@ class Player extends Component {
                 </head>
                 <body>
                     <div id="msg"></div>
-                    <button id="request_btn">Request a hint</button>
+                    <button id="request_btn" onClick={this.request_hint} disabled={this.state.hint_requested}>Request a hint</button>
                 </body>
             </html>
         )
