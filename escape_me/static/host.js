@@ -91,7 +91,6 @@ $(document).ready(function() {
         }
     });
 
-
     $('#save_btn').click(function(event) {
         let val = $('#emit_data').val();
         if (val.length > 0) {
@@ -99,7 +98,29 @@ $(document).ready(function() {
         }
     });
     $('#db_delete_btn').click(handle_database_delete);
+
+    update_hint_available_btn(false);
+    $('#hint_available_btn').click(function(event) {
+        let btn = $(event.target);
+        if (btn.val() == 'true') {
+            socket.emit('hint_available', {data: false});
+            update_hint_available_btn(false);
+        } else {
+            socket.emit('hint_available', {data: true});
+            update_hint_available_btn(true);
+        }
+    });
 });
+
+function update_hint_available_btn(available) {
+    if (available) {
+        $('#hint_available_btn').html('Cancel hint available')
+        $('#hint_available_btn').val('true')
+    } else {
+        $('#hint_available_btn').html('Nofity hint available')
+        $('#hint_available_btn').val('false')
+    }
+}
 
 function set_hint_requested(on_off) {
     if (on_off) {

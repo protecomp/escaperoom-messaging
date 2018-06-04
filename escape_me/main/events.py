@@ -39,8 +39,10 @@ def hint_request():
 
 
 @socketio.on('hint_available')
-def hint_available():
-    emit('hint_available')
+def hint_available(payload):
+    available = payload.get('data', True)
+    emit('my_response', {'event': 'hint available', 'data': available},
+         broadcast=True)
 
 
 @socketio.on('hint_save')

@@ -43,6 +43,9 @@ $(document).ready(function() {
         if (msg.event === 'hint request') {
             animate_hint_requested(true);
         }
+        if (msg.event === 'hint available') {
+            console.log("hint available: " + msg.data)
+        }
     });
 
     $('#request_btn').on('click', function(event) {
