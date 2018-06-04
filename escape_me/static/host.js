@@ -72,10 +72,10 @@ $(document).ready(function() {
         }
         log_entry(msg.event, msg.data);
         if (msg.event === "hint request") {
-            $('#send_btn').removeAttr('disabled');
+            $('#hint_requested').html("true");
         }
         if (msg.event === "hint set") {
-            $('#send_btn').attr('disabled', true);
+            $('#hint_requested').html("false");
         }
     });
 
