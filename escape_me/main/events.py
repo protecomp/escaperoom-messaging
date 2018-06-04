@@ -29,10 +29,16 @@ def hint_available():
 @socketio.on('hint_save')
 def hint_save(message):
     db = get_db()
-    db.execute(
-        'INSERT INTO hint (body) VALUES (?)',
-        (message['data'], )
-    )
+    if 'row_id' in message:
+        db.execute(
+            'UPDATE hint SET body = (?) WHERE id = (?)',
+            (message['data'], message['row_id'])
+        )
+    else:
+        db.execute(
+            'INSERT INTO hint (body) VALUES (?)',
+            (message['data'], )
+        )
     db.commit()
     broadcast_database()
 

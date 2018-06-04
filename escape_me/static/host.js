@@ -120,15 +120,45 @@ function update_database_table(rows) {
         $('#database').append(
             '<tr class="table_row" row_id="'+ element.id +'">' +
             '<td>' + '<input class="hint_delete" type="checkbox">' + '</td>' +
-            '<td>' + '<button>+</button>' + '</td>' +
+            '<td>' + '<button class="hint_use">+</button><button class="hint_edit">edit</button>' + '</td>' +
             '<td>' + '' + '</td>' +
-            '<td class="hint_body">' + element.body + '</td>' +
+            '<td class="hint_body"><span>' + element.body + '</span></td>' +
             '</tr>'
         )
     });
-    $('#database tr.table_row button').click(function(event){
-        let body = $(event.target).parents('.table_row').children('.hint_body');
+    $('#database tr.table_row button.hint_use').click(function(event){
+        let body = $(event.target).parents('.table_row').find('.hint_body span');
         $('#emit_data').val(body.html())
+    });
+    $('#database tr.table_row button.hint_edit').click(function(event){
+        var edit_btn = $(event.target);
+        var table_row = edit_btn.parents('.table_row');
+        var body_text = table_row.find('.hint_body span');
+        var textarea = $('<textarea cols="60" rows="5" id="row_editor"></textarea>')
+        var apply_btn = $('<button>Apply</button>');
+        var cancel_btn = $('<button>Cancel</button>');
+        function reset_edit() {
+            edit_btn.show();
+            body_text.show();
+            apply_btn.remove();
+            cancel_btn.remove();
+            textarea.remove();
+        }
+        apply_btn.click(event => {
+            let row_id = table_row.attr('row_id');
+            let new_body = textarea.val();
+            console.log("edited: " + row_id + ": " + new_body);
+            socket.emit('hint_save', {data: new_body, row_id: row_id});
+            reset_edit();
+        })
+        cancel_btn.click(reset_edit);
+
+        edit_btn.parent().append(apply_btn);
+        edit_btn.parent().append(cancel_btn);
+        edit_btn.hide();
+        textarea.val(body_text.html())
+        body_text.parent().append(textarea);
+        body_text.hide();
     });
 }
 
