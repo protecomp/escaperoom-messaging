@@ -91,6 +91,9 @@ def hint_available(payload):
     state.hint_body = payload.get('hint_body', '')
     broadcast_database()
 
+    if (state.hint_requested):
+        send_hint({'hint_body': state.hint_body})
+
 
 @socketio.on('hint_save')
 def hint_save(payload):
