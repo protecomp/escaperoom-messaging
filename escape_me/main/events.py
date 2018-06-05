@@ -7,6 +7,40 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
+class Hints():
+    def insert(self, body):
+        db = get_db()
+        db.execute(
+            'INSERT INTO hint (body) VALUES (?)',
+            (body, )
+        )
+        db.commit()
+
+    def update(self, row_id, body):
+        db = get_db()
+        db.execute(
+            'UPDATE hint SET body = (?) WHERE id = (?)',
+            (body, row_id)
+        )
+        db.commit()
+
+    def delete(self, row_id_list):
+        to_delete_str = ", ".join(row_id_list)
+        db = get_db()
+        db.execute(
+            'DELETE FROM hint WHERE id IN ( {} )'.format(to_delete_str)
+        )
+        db.commit()
+
+    def get_all(self):
+        db = get_db()
+        return [
+            {'body': row['body'], 'id': row['id']}
+            for row in db.execute('SELECT id, body FROM hint').fetchall()
+        ]
+hints = Hints()
+
+
 class State():
     def __setattr__(self, key, value):
         value_json = json.dumps(value)
@@ -31,14 +65,9 @@ state = State()
 
 
 def broadcast_database():
-    db = get_db()
-    all_hints = [
-        {'body': row['body'], 'id': row['id']}
-        for row in db.execute('SELECT id, body FROM hint').fetchall()
-    ]
     emit(
         'my_response',
-        {'event': 'database', 'data': {'all_hints': all_hints, 'state': state.get_all()}},
+        {'event': 'database', 'data': {'all_hints': hints.get_all(), 'state': state.get_all()}},
         broadcast=True
     )
 
@@ -52,37 +81,24 @@ def hint_request():
 
 @socketio.on('hint_available')
 def hint_available(payload):
-    available = payload.get('data', True)
-    emit('my_response', {'event': 'hint available', 'data': available},
-         broadcast=True)
+    state.hint_available = payload.get('hint_available', True)
+    state.hint_body = payload.get('hint_body', '')
+    broadcast_database()
 
 
 @socketio.on('hint_save')
 def hint_save(message):
-    db = get_db()
     if 'row_id' in message:
-        db.execute(
-            'UPDATE hint SET body = (?) WHERE id = (?)',
-            (message['data'], message['row_id'])
-        )
+        hints.update(message['row_id'], message['data'])
     else:
-        db.execute(
-            'INSERT INTO hint (body) VALUES (?)',
-            (message['data'], )
-        )
-    db.commit()
+        hints.insert(message['data'])
     broadcast_database()
 
 
 @socketio.on('hint_delete')
 def hint_delete(to_delete):
-    to_delete_str = ", ".join(to_delete['data'])
-    print("DELETING: %s" % to_delete_str)
-    db = get_db()
-    db.execute(
-        'DELETE FROM hint WHERE id IN ( {} )'.format(to_delete_str)
-    )
-    db.commit()
+    print("DELETING: %s" % to_delete)
+    hints.delete(to_delete['data'])
     broadcast_database()
 
 
