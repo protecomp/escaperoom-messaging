@@ -88,8 +88,8 @@ def hint_request():
 
 @socketio.on('hint_available')
 def hint_available(payload):
-    state.hint_available = payload['data'].get('hint_available', True)
-    state.hint_body = payload['data'].get('hint_body', '')
+    state.hint_available = payload.get('hint_available', True)
+    state.hint_body = payload.get('hint_body', '')
     broadcast_database()
 
 
