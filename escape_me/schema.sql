@@ -21,5 +21,6 @@ CREATE TABLE room (
 
 
 CREATE TABLE state (
-  hint_requested INTEGER DEFAULT 0
+  key TEXT PRIMARY KEY,
+  value TEXT
 );

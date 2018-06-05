@@ -1,3 +1,4 @@
+import json
 from flask_socketio import emit, disconnect
 from .. import socketio
 from ..db import get_db
@@ -6,15 +7,27 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def set_hint_requested(value):
-    db = get_db()
-    db.execute('UPDATE state SET hint_requested = {}'.format('1' if value else '0'))
-    db.commit()
+class State():
+    def __setattr__(self, key, value):
+        value_json = json.dumps(value)
+        db = get_db()
+        db.execute('INSERT OR REPLACE INTO state (key, value) VALUES (?, ?)', (key, value_json))
+        db.commit()
 
+    def __getattr__(self, key):
+        db = get_db()
+        return json.loads(db.execute(
+            'SELECT value FROM state WHERE key = "{}"'.format(key)
+        ).fetchone().get('value', 'null'))
 
-def get_hint_requested():
-    db = get_db()
-    return db.execute('SELECT hint_requested FROM state').fetchone()['hint_requested']
+    def get_all(self):
+        db = get_db()
+        ret = {}
+        for row in db.execute('SELECT key, value FROM state').fetchall():
+            ret[row['key']] = row['value']
+        return ret
+
+state = State()
 
 
 def broadcast_database():
@@ -23,17 +36,16 @@ def broadcast_database():
         {'body': row['body'], 'id': row['id']}
         for row in db.execute('SELECT id, body FROM hint').fetchall()
     ]
-    state = {'hint_requested': get_hint_requested()}
     emit(
         'my_response',
-        {'event': 'database', 'data': {'all_hints': all_hints, 'state': state}},
+        {'event': 'database', 'data': {'all_hints': all_hints, 'state': state.get_all()}},
         broadcast=True
     )
 
 
 @socketio.on('hint_request')
 def hint_request():
-    set_hint_requested(True)
+    state.hint_requested = True
     emit('my_response', {'event': 'hint request', 'data': "Hint requested by player"},
          broadcast=True)
 
@@ -76,7 +88,7 @@ def hint_delete(to_delete):
 
 @socketio.on('my_message')
 def send_hint(message):
-    set_hint_requested(False)
+    state.hint_requested = False
     emit('set_message', {'data': message['data']}, broadcast=True)
     emit('my_response', {'event': 'hint set', 'data': message['data']})
 
