@@ -61,7 +61,7 @@ class State():
         db = get_db()
         ret = {}
         for row in db.execute('SELECT key, value FROM state').fetchall():
-            ret[row['key']] = row['value']
+            ret[row['key']] = json.loads(row['value'])
         return ret
 
 state = State()

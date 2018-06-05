@@ -66,9 +66,11 @@ $(document).ready(function() {
     socket.on('my_response', function(msg) {
         console.log(msg);
         if (msg.event === "database") {
+            let state = msg.data.state;
             log_entry(msg.event, "received " + msg.data.all_hints.length + " rows");
             update_database_table(msg.data.all_hints);
-            set_hint_requested(msg.data.state.hint_requested);
+            set_hint_requested(state.hint_requested);
+            update_hint_available_btn(state.hint_available);
             return;
         }
         log_entry(msg.event, msg.data);

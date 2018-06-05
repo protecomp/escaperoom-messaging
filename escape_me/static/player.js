@@ -40,6 +40,11 @@ $(document).ready(function() {
 
     socket.on('my_response', function(msg) {
         console.log(msg)
+        if (msg.event === "database") {
+            let state = msg.data.state;
+            animate_hint_requested(state.hint_requested);
+            return;
+        }
         if (msg.event === 'hint request') {
             animate_hint_requested(true);
         }
@@ -49,7 +54,6 @@ $(document).ready(function() {
     });
 
     $('#request_btn').on('click', function(event) {
-        $('#request_btn').attr('disabled', true);
         socket.emit('hint_request');
         console.log("hint_request")
     });
@@ -62,6 +66,7 @@ function animate_hint_requested(start_stop) {
     clearInterval(hint_requested_loop);
     hint_requested_loop = null;
     if (start_stop) {
+        $('#request_btn').attr('disabled', true);
         $('#request_btn').text('Hint requested');
         // Start a loop that animates three dots
         hint_requested_loop = setInterval(function () {
