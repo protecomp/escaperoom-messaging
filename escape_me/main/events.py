@@ -82,7 +82,7 @@ def hint_request():
          broadcast=True)
 
     if (state.hint_available and state.hint_body != ""):
-        emit('set_message', {'data': state.hint_body}, broadcast=True)
+        emit('set_message', {'hint_body': state.hint_body}, broadcast=True)
         emit('my_response', {'event': 'hint set', 'data': state.hint_body})
 
 
@@ -94,11 +94,11 @@ def hint_available(payload):
 
 
 @socketio.on('hint_save')
-def hint_save(message):
-    if 'row_id' in message:
-        hints.update(message['row_id'], message['data'])
+def hint_save(payload):
+    if 'row_id' in payload:
+        hints.update(payload['row_id'], payload['hint_body'])
     else:
-        hints.insert(message['data'])
+        hints.insert(payload['hint_body'])
     broadcast_database()
 
 
@@ -109,11 +109,11 @@ def hint_delete(to_delete):
     broadcast_database()
 
 
-@socketio.on('my_message')
-def send_hint(message):
+@socketio.on('hint_send')
+def send_hint(payload):
     state.hint_requested = False
-    emit('set_message', {'data': message['data']}, broadcast=True)
-    emit('my_response', {'event': 'hint set', 'data': message['data']})
+    emit('set_message', {'hint_body': payload['hint_body']}, broadcast=True)
+    emit('my_response', {'event': 'hint set', 'data': payload['hint_body']})
 
 
 @socketio.on('connect')

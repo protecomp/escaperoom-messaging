@@ -32,7 +32,7 @@ $(document).ready(function() {
     // section of the page.
     socket.on('set_message', function(msg) {
         $('#msg').text("")
-        message = msg['data'];
+        message = msg['hint_body'];
         clearInterval(text_animate_loop);
         text_animate_loop = setInterval(text_animate, 100);
         animate_hint_requested(false);

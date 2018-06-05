@@ -87,14 +87,14 @@ $(document).ready(function() {
     $('#send_btn').click(function(event) {
         let val = $('#emit_data').val();
         if (val.length > 0) {
-            socket.emit('my_message', {data: $('#emit_data').val()});
+            socket.emit('hint_send', {hint_body: $('#emit_data').val()});
         }
     });
 
     $('#save_btn').click(function(event) {
         let val = $('#emit_data').val();
         if (val.length > 0) {
-            socket.emit('hint_save', {data: $('#emit_data').val()});
+            socket.emit('hint_save', {hint_body: $('#emit_data').val()});
         }
     });
     $('#db_delete_btn').click(handle_database_delete);
@@ -180,7 +180,7 @@ function update_database_table(rows) {
             let row_id = table_row.attr('row_id');
             let new_body = textarea.val();
             console.log("edited: " + row_id + ": " + new_body);
-            socket.emit('hint_save', {data: new_body, row_id: row_id});
+            socket.emit('hint_save', {hint_body: new_body, row_id: row_id});
             reset_edit();
         })
         cancel_btn.click(reset_edit);
