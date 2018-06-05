@@ -84,6 +84,8 @@ def hint_request():
     if (state.hint_available and state.hint_body != ""):
         emit('set_message', {'hint_body': state.hint_body}, broadcast=True)
         emit('my_response', {'event': 'hint set', 'data': state.hint_body})
+        state.hint_available = False
+        state.hint_body = ""
 
 
 @socketio.on('hint_available')
