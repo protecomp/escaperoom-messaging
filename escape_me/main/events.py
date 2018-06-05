@@ -50,9 +50,12 @@ class State():
 
     def __getattr__(self, key):
         db = get_db()
-        return json.loads(db.execute(
-            'SELECT value FROM state WHERE key = "{}"'.format(key)
-        ).fetchone().get('value', 'null'))
+        try:
+            return json.loads(db.execute(
+                'SELECT value FROM state WHERE key = "{}"'.format(key)
+            ).fetchone()['value'])
+        except TypeError:  # Value didn't exist
+            return None
 
     def get_all(self):
         db = get_db()
@@ -78,11 +81,15 @@ def hint_request():
     emit('my_response', {'event': 'hint request', 'data': "Hint requested by player"},
          broadcast=True)
 
+    if (state.hint_available and state.hint_body != ""):
+        emit('set_message', {'data': state.hint_body}, broadcast=True)
+        emit('my_response', {'event': 'hint set', 'data': state.hint_body})
+
 
 @socketio.on('hint_available')
 def hint_available(payload):
-    state.hint_available = payload.get('hint_available', True)
-    state.hint_body = payload.get('hint_body', '')
+    state.hint_available = payload['data'].get('hint_available', True)
+    state.hint_body = payload['data'].get('hint_body', '')
     broadcast_database()
 
 

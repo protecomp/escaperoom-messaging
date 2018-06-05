@@ -103,10 +103,12 @@ $(document).ready(function() {
     $('#hint_available_btn').click(function(event) {
         let btn = $(event.target);
         if (btn.val() == 'true') {
-            socket.emit('hint_available', {data: false});
+            socket.emit('hint_available', {data: {hint_available: false}});
             update_hint_available_btn(false);
         } else {
-            socket.emit('hint_available', {data: true});
+            socket.emit('hint_available', {data: {
+                hint_available: true, hint_body: $('#emit_data').val()
+            }});
             update_hint_available_btn(true);
         }
     });
