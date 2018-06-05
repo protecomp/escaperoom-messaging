@@ -82,10 +82,7 @@ def hint_request():
          broadcast=True)
 
     if (state.hint_available and state.hint_body != ""):
-        emit('set_message', {'hint_body': state.hint_body}, broadcast=True)
-        emit('my_response', {'event': 'hint set', 'data': state.hint_body})
-        state.hint_available = False
-        state.hint_body = ""
+        send_hint({'hint_body': state.hint_body})
 
 
 @socketio.on('hint_available')
@@ -114,8 +111,11 @@ def hint_delete(to_delete):
 @socketio.on('hint_send')
 def send_hint(payload):
     state.hint_requested = False
+    state.hint_available = False
+    state.hint_body = ""
     emit('set_message', {'hint_body': payload['hint_body']}, broadcast=True)
     emit('my_response', {'event': 'hint set', 'data': payload['hint_body']})
+
 
 
 @socketio.on('connect')
