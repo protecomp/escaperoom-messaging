@@ -63,7 +63,6 @@ def send_hint(payload):
     emit('my_response', {'event': 'hint set', 'data': payload['hint_body']})
 
 
-
 @socketio.on('connect')
 def client_connected():
     print("Client connected")
@@ -79,11 +78,6 @@ def test_disconnect():
 def disconnect_request():
     emit('my_response', {'event': 'connection', 'data': 'Disconnected!'})
     disconnect()
-
-
-@socketio.on('my_event')
-def respond(message):
-    emit('my_response', {'event': 'connection', 'data': message['data']}, broadcast=True)
 
 
 @socketio.on('ping')
