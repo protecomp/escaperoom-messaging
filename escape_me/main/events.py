@@ -21,18 +21,18 @@ def hint_request():
     emit('hint_request', broadcast=True)
     broadcast_database()
 
-    if (state.hint_available and state.hint_body != ""):
-        hint_send({'hint_body': state.hint_body})
+    if (state.hint_available and state.hint_available_body != ""):
+        hint_send({'hint_body': state.hint_available_body})
 
 
 @socketio.on('hint_available')
 def hint_available(payload):
     state.hint_available = payload.get('hint_available', True)
-    state.hint_body = payload.get('hint_body', '')
+    state.hint_available_body = payload.get('hint_body', '')
     broadcast_database()
 
     if (state.hint_requested):
-        hint_send({'hint_body': state.hint_body})
+        hint_send({'hint_body': state.hint_available_body})
 
 
 @socketio.on('hint_save')
@@ -55,7 +55,8 @@ def hint_delete(to_delete):
 def hint_send(payload):
     state.hint_requested = False
     state.hint_available = False
-    state.hint_body = ""
+    state.hint_available_body = ""
+    state.hint_body = payload['hint_body']
     emit('hint_send', {'hint_body': payload['hint_body']}, broadcast=True)
     broadcast_database()
 

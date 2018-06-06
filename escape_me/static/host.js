@@ -67,7 +67,7 @@ $(document).ready(function() {
             set_hint_body(data.state.hint_body)
         }
         update_hint_available(data.state.hint_available);
-        return;
+        update_showing_hint_body(data.state.hint_body)
     });
     socket.on('hint_request', function(msg) {
         log_entry('hint_request' ,'Hint requested');
@@ -113,6 +113,10 @@ $(document).ready(function() {
         }
     });
 });
+
+function update_showing_hint_body(value) {
+    $('#showing_hint_body').html(value);
+}
 
 function set_hint_body(value) {
     if (!el_hint_body.attr('disabled')) {
