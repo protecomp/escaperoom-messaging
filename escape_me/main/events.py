@@ -11,18 +11,15 @@ hints = Hints()
 
 
 def broadcast_database():
-    emit(
-        'my_response',
-        {'event': 'database', 'data': {'all_hints': hints.get_all(), 'state': state.get_all()}},
-        broadcast=True
-    )
+    emit('database', {'all_hints': hints.get_all(), 'state': state.get_all()},
+         broadcast=True)
 
 
 @socketio.on('hint_request')
 def hint_request():
     state.hint_requested = True
-    emit('my_response', {'event': 'hint request', 'data': "Hint requested by player"},
-         broadcast=True)
+    emit('hint_request', broadcast=True)
+    broadcast_database()
 
     if (state.hint_available and state.hint_body != ""):
         send_hint({'hint_body': state.hint_body})
@@ -59,8 +56,7 @@ def send_hint(payload):
     state.hint_requested = False
     state.hint_available = False
     state.hint_body = ""
-    emit('set_message', {'hint_body': payload['hint_body']}, broadcast=True)
-    emit('my_response', {'event': 'hint set', 'data': payload['hint_body']})
+    emit('hint_send', {'hint_body': payload['hint_body']}, broadcast=True)
 
 
 @socketio.on('connect')
@@ -76,7 +72,7 @@ def test_disconnect():
 
 @socketio.on('disconnect_request')
 def disconnect_request():
-    emit('my_response', {'event': 'connection', 'data': 'Disconnected!'})
+    emit('disconnected')
     disconnect()
 
 

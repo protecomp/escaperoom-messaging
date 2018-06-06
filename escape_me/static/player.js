@@ -18,28 +18,16 @@ $(document).ready(function() {
     socket.on('player_ping', function() {
         socket.emit('player_pong');
     });
-
-    socket.on('set_message', function(msg) {
+    socket.on('hint_send', function(msg) {
         $('#msg').text("")
         message = msg['hint_body'];
         clearInterval(text_animate_loop);
         text_animate_loop = setInterval(text_animate, 100);
         animate_hint_requested(false);
     });
-
-    socket.on('my_response', function(msg) {
-        console.log(msg)
-        if (msg.event === "database") {
-            let state = msg.data.state;
-            animate_hint_requested(state.hint_requested);
-            return;
-        }
-        if (msg.event === 'hint request') {
-            animate_hint_requested(true);
-        }
-        if (msg.event === 'hint available') {
-            console.log("hint available: " + msg.data)
-        }
+    socket.on('database', function(data) {
+        console.log("database: " + data)
+        animate_hint_requested(data.state.hint_requested);
     });
 
     $('#request_btn').on('click', function(event) {

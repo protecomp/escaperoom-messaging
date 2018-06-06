@@ -55,24 +55,21 @@ $(document).ready(function() {
         $('#connection_status').text("Connected")
         console.log("Connected");
     });
-    socket.on('my_response', function(msg) {
-        console.log(msg);
-        if (msg.event === "database") {
-            let state = msg.data.state;
-            log_entry(msg.event, "received " + msg.data.all_hints.length + " rows");
-            update_database_table(msg.data.all_hints);
-            set_hint_requested(state.hint_requested);
-            update_hint_available_btn(state.hint_available);
-            return;
-        }
-        log_entry(msg.event, msg.data);
-        if (msg.event === "hint request") {
-            set_hint_requested(true);
-        }
-        if (msg.event === "hint set") {
-            set_hint_requested(false);
-        }
+    
+    socket.on('database', function(data) {
+        log_entry('database' ,'state: ' + JSON.stringify(data.state));
+        update_database_table(data.all_hints);
+        set_hint_requested(data.state.hint_requested);
+        update_hint_available_btn(data.state.hint_available);
+        return;
     });
+    socket.on('hint request', function(msg) {
+        set_hint_requested(true);
+    });
+    socket.on('hint set', function(msg) {
+        set_hint_requested(false);
+    });
+    
 
 
     // Handlers for the different forms in the page.
