@@ -1,6 +1,9 @@
 var socket;
+var el_hint_body;
 
 $(document).ready(function() {
+
+    el_hint_body = $('#emit_data');
 
     // Connect to the Socket.IO server.
     socket = io.connect();
@@ -60,13 +63,18 @@ $(document).ready(function() {
         log_entry('database' ,'state: ' + JSON.stringify(data.state));
         update_database_table(data.all_hints);
         set_hint_requested(data.state.hint_requested);
-        update_hint_available_btn(data.state.hint_available);
+        if (data.state.hint_available) {
+            set_hint_body(data.state.hint_body)
+        }
+        update_hint_available(data.state.hint_available);
         return;
     });
-    socket.on('hint request', function(msg) {
+    socket.on('hint_request', function(msg) {
+        log_entry('hint_request' ,'Hint requested');
         set_hint_requested(true);
     });
-    socket.on('hint set', function(msg) {
+    socket.on('hint_send', function(msg) {
+        log_entry('hint_set' ,'body: ' + msg.hint_body);
         set_hint_requested(false);
     });
     
@@ -76,42 +84,57 @@ $(document).ready(function() {
     // These accept data from the user and send it to the server in a
     // variety of ways
     $('#send_btn').click(function(event) {
-        let val = $('#emit_data').val();
+        let val = el_hint_body.val();
         if (val.length > 0) {
-            socket.emit('hint_send', {hint_body: $('#emit_data').val()});
+            socket.emit('hint_send', {hint_body: el_hint_body.val()});
+            set_hint_body("");
         }
     });
 
     $('#save_btn').click(function(event) {
-        let val = $('#emit_data').val();
+        let val = el_hint_body.val();
         if (val.length > 0) {
-            socket.emit('hint_save', {hint_body: $('#emit_data').val()});
+            socket.emit('hint_save', {hint_body: el_hint_body.val()});
         }
     });
     $('#db_delete_btn').click(handle_database_delete);
 
-    update_hint_available_btn(false);
+    update_hint_available(false);
     $('#hint_available_btn').click(function(event) {
         let btn = $(event.target);
         if (btn.val() == 'true') {
             socket.emit('hint_available', {hint_available: false});
-            update_hint_available_btn(false);
+            update_hint_available(false);
         } else {
             socket.emit('hint_available', {
-                hint_available: true, hint_body: $('#emit_data').val()
+                hint_available: true, hint_body: el_hint_body.val()
             });
-            update_hint_available_btn(true);
+            update_hint_available(true);
         }
     });
 });
 
-function update_hint_available_btn(available) {
+function set_hint_body(value) {
+    if (!el_hint_body.attr('disabled')) {
+        el_hint_body.val(value)
+    }
+}
+
+function update_hint_buttons() {
+    let empty = (el_hint_body.val().length === 0);
+    $('#send_btn').attr('disabled', empty);
+    $('#save_btn').attr('disabled', empty);
+}
+
+function update_hint_available(available) {
     if (available) {
-        $('#hint_available_btn').html('Cancel hint available')
+        $('#hint_available_btn').html('Poista vihje saatavilta')
         $('#hint_available_btn').val('true')
+        el_hint_body.attr('disabled', true);
     } else {
-        $('#hint_available_btn').html('Nofity hint available')
+        $('#hint_available_btn').html('Aseta vihje saataville')
         $('#hint_available_btn').val('false')
+        el_hint_body.attr('disabled', false);
     }
 }
 
@@ -151,7 +174,8 @@ function update_database_table(rows) {
     });
     $('#database tr.table_row button.hint_use').click(function(event){
         let body = $(event.target).parents('.table_row').find('.hint_body span');
-        $('#emit_data').val(body.html())
+        set_hint_body(body.html())
+        update_hint_buttons();
     });
     $('#database tr.table_row button.hint_edit').click(function(event){
         var edit_btn = $(event.target);

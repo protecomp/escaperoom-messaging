@@ -57,6 +57,7 @@ def hint_send(payload):
     state.hint_available = False
     state.hint_body = ""
     emit('hint_send', {'hint_body': payload['hint_body']}, broadcast=True)
+    broadcast_database()
 
 
 @socketio.on('connect')
