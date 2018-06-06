@@ -61,6 +61,12 @@ def hint_send(payload):
     broadcast_database()
 
 
+@socketio.on('hint_clear')
+def hint_clear():
+    hint_send({'hint_body': ''})
+    broadcast_database()
+
+
 @socketio.on('connect')
 def client_connected():
     print("Client connected")

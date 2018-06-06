@@ -99,6 +99,10 @@ $(document).ready(function() {
     });
     $('#db_delete_btn').click(handle_database_delete);
 
+    $('#hint_clear_btn').click(function(event) {
+        socket.emit('hint_clear');
+    });
+
     update_hint_available(false);
     $('#hint_available_btn').click(function(event) {
         let btn = $(event.target);
