@@ -1,70 +1,13 @@
-import json
 from flask_socketio import emit, disconnect
 from .. import socketio
 from ..db import get_db
+from .models import State, Hints
 
 from logging import getLogger
 logger = getLogger(__name__)
 
-
-class Hints():
-    def insert(self, body):
-        db = get_db()
-        db.execute(
-            'INSERT INTO hint (body) VALUES (?)',
-            (body, )
-        )
-        db.commit()
-
-    def update(self, row_id, body):
-        db = get_db()
-        db.execute(
-            'UPDATE hint SET body = (?) WHERE id = (?)',
-            (body, row_id)
-        )
-        db.commit()
-
-    def delete(self, row_id_list):
-        to_delete_str = ", ".join(row_id_list)
-        db = get_db()
-        db.execute(
-            'DELETE FROM hint WHERE id IN ( {} )'.format(to_delete_str)
-        )
-        db.commit()
-
-    def get_all(self):
-        db = get_db()
-        return [
-            {'body': row['body'], 'id': row['id']}
-            for row in db.execute('SELECT id, body FROM hint').fetchall()
-        ]
-hints = Hints()
-
-
-class State():
-    def __setattr__(self, key, value):
-        value_json = json.dumps(value)
-        db = get_db()
-        db.execute('INSERT OR REPLACE INTO state (key, value) VALUES (?, ?)', (key, value_json))
-        db.commit()
-
-    def __getattr__(self, key):
-        db = get_db()
-        try:
-            return json.loads(db.execute(
-                'SELECT value FROM state WHERE key = "{}"'.format(key)
-            ).fetchone()['value'])
-        except TypeError:  # Value didn't exist
-            return None
-
-    def get_all(self):
-        db = get_db()
-        ret = {}
-        for row in db.execute('SELECT key, value FROM state').fetchall():
-            ret[row['key']] = json.loads(row['value'])
-        return ret
-
 state = State()
+hints = Hints()
 
 
 def broadcast_database():
