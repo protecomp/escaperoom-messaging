@@ -22,7 +22,7 @@ def hint_request():
     broadcast_database()
 
     if (state.hint_available and state.hint_body != ""):
-        send_hint({'hint_body': state.hint_body})
+        hint_send({'hint_body': state.hint_body})
 
 
 @socketio.on('hint_available')
@@ -32,7 +32,7 @@ def hint_available(payload):
     broadcast_database()
 
     if (state.hint_requested):
-        send_hint({'hint_body': state.hint_body})
+        hint_send({'hint_body': state.hint_body})
 
 
 @socketio.on('hint_save')
@@ -52,7 +52,7 @@ def hint_delete(to_delete):
 
 
 @socketio.on('hint_send')
-def send_hint(payload):
+def hint_send(payload):
     state.hint_requested = False
     state.hint_available = False
     state.hint_body = ""
@@ -66,7 +66,7 @@ def client_connected():
 
 
 @socketio.on('disconnect')
-def test_disconnect():
+def client_disconnected():
     print('Client disconnected')
 
 
