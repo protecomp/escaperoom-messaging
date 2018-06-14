@@ -39,6 +39,18 @@ function set_hint(new_hint_body, no_animation = false) {
     animate_hint_requested(false);
 }
 
+function normal_button() {
+    $('#request_btn').css('background-position', '0 0');
+}
+
+function dark_button() {
+    $('#request_btn').css('background-position', '80px 0');
+}
+
+function bright_button() {
+    $('#request_btn').css('background-position', '160px 0');
+}
+
 text_animate_loop = null;
 function text_animate() {
     var new_char = hint_body.charAt($('#msg').text().length)
@@ -53,21 +65,21 @@ function text_animate() {
 hint_requested_loop = null;
 function animate_hint_requested(start_stop) {
     // Stop the loop first.
-    $('#request_btn').text('Request a hint');
+    $('#request_btn').text('');
     clearInterval(hint_requested_loop);
     hint_requested_loop = null;
     if (start_stop) {
         $('#request_btn').attr('disabled', true);
-        $('#request_btn').text('Hint requested');
+        $('#msg').text('');
         // Start a loop that animates three dots
         hint_requested_loop = setInterval(function () {
-            let new_label = $('#request_btn').text();
-            if (new_label.length < 'Hint requested...'.length) {
+            let new_label = $('#msg').text();
+            if (new_label.length < '..'.length) {
                 new_label += ".";
             } else {
-                new_label = 'Hint requested'
+                new_label = ''
             }
-            $('#request_btn').text(new_label);
+            $('#msg').text(new_label);
         }, 500)
     }
 }
