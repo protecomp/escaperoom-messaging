@@ -15,9 +15,10 @@ $(document).ready(function() {
     socket.on('database', function(data) {
         console.log(data)
         animate_hint_requested(data.state.hint_requested);
+        animate_hint_available(data.state.hint_available);
         if (initial) {
             initial = false;
-            set_hint(data.state.hint_body, no_animation = true);
+            set_hint(data.state.hint_body, animation = false);
         }
     });
 
@@ -27,11 +28,11 @@ $(document).ready(function() {
     });
 });
 
-function set_hint(new_hint_body, no_animation = false) {
+function set_hint(new_hint_body, animation = true) {
     $('#msg').text("")
     hint_body = new_hint_body;
     clearInterval(text_animate_loop);
-    if (!no_animation) {
+    if (animation) {
         text_animate_loop = setInterval(text_animate, 100);
     } else {
         $('#msg').text(new_hint_body);
@@ -74,12 +75,32 @@ function animate_hint_requested(start_stop) {
         // Start a loop that animates three dots
         hint_requested_loop = setInterval(function () {
             let new_label = $('#msg').text();
-            if (new_label.length < '..'.length) {
+            if (new_label.length < '...'.length) {
                 new_label += ".";
             } else {
                 new_label = ''
             }
             $('#msg').text(new_label);
+        }, 500)
+    }
+}
+
+hint_available_loop = null;
+button_normal = true;
+function animate_hint_available(start_stop) {
+    // Stop the loop
+    normal_button();
+    clearInterval(hint_available_loop);
+    hint_available_loop = null;
+    if (start_stop) {
+        hint_available_loop = setInterval(function () {
+            if (button_normal) {
+                bright_button();
+                button_normal = false;
+            } else {
+                normal_button();
+                button_normal = true;
+            }
         }, 500)
     }
 }
