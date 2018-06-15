@@ -12,6 +12,23 @@
         #log td, #log tr {
             padding-left: 15px;
         }
+        #indicator-wrapper {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        #indicator-wrapper div {
+            padding: .4em 1em;
+            margin-bottom: .5em;
+            color: white;
+            font-size: 16px;
+        }
+        #hint-req-indicator {
+            background-color: darkred;
+        }
+        #hint-avail-indicator {
+            background-color: darkgreen
+        }
     </style>
 </head>
 <body>
@@ -52,5 +69,9 @@
           <th>Data</th>
         </tr>
     </table>
+    <div id="indicator-wrapper">
+        <div id="hint-req-indicator" style="display: none">Vihje pyydetty</div>
+        <div id="hint-avail-indicator" style="display: none">Vihje saatavilla</div>
+    </div>
 </body>
 </html>

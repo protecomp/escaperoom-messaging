@@ -71,6 +71,7 @@ $(document).ready(function() {
     });
     socket.on('hint_request', function(msg) {
         log_entry('hint_request' ,'Hint requested');
+        notifyHintRequested();
         set_hint_requested(true);
     });
     socket.on('hint_send', function(msg) {
@@ -138,10 +139,12 @@ function update_hint_available(available) {
     if (available) {
         $('#hint_available_btn').html('Poista vihje saatavilta')
         $('#hint_available_btn').val('true')
+        $('#hint-avail-indicator').show();
         el_hint_body.attr('disabled', true);
     } else {
         $('#hint_available_btn').html('Aseta vihje saataville')
         $('#hint_available_btn').val('false')
+        $('#hint-avail-indicator').hide();
         el_hint_body.attr('disabled', false);
     }
 }
@@ -149,9 +152,10 @@ function update_hint_available(available) {
 function set_hint_requested(on_off) {
     if (on_off) {
         $('#hint_requested').html("true");
-        notifyHintRequested();
+        $('#hint-req-indicator').show();
     } else {
         $('#hint_requested').html("false");
+        $('#hint-req-indicator').hide();
     }
 }
 
