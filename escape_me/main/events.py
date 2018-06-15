@@ -17,12 +17,12 @@ def broadcast_database():
 
 @socketio.on('hint_request')
 def hint_request():
-    state.hint_requested = True
-    emit('hint_request', broadcast=True)
-    broadcast_database()
-
     if (state.hint_available and state.hint_available_body != ""):
         hint_send({'hint_body': state.hint_available_body})
+    else:
+        state.hint_requested = True
+        emit('hint_request', broadcast=True)
+    broadcast_database()
 
 
 @socketio.on('hint_available')
