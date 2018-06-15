@@ -59,28 +59,28 @@ function text_animate() {
     if (hint_body.length == $('#msg').text().length) {
         console.log("Done animating!");
         clearInterval(text_animate_loop);
-        $('#request_btn').removeAttr('disabled');
     }
 }
 
 hint_requested_loop = null;
 function animate_hint_requested(start_stop) {
     // Stop the loop first.
-    $('#request_btn').text('');
     clearInterval(hint_requested_loop);
     hint_requested_loop = null;
+    $('#indicator').text('');
+    $('#request_btn').removeAttr('disabled');
+
     if (start_stop) {
         $('#request_btn').attr('disabled', true);
-        $('#msg').text('');
         // Start a loop that animates three dots
         hint_requested_loop = setInterval(function () {
-            let new_label = $('#msg').text();
+            let new_label = $('#indicator').text();
             if (new_label.length < '...'.length) {
                 new_label += ".";
             } else {
                 new_label = ''
             }
-            $('#msg').text(new_label);
+            $('#indicator').text(new_label);
         }, 500)
     }
 }

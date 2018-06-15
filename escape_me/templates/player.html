@@ -9,7 +9,7 @@
     body {
         background: black;
     }
-    #msg {
+    #msg-wrapper {
         font-size: 30px;
         /* font-variant: small-caps; */
         padding: 2em 10%;
@@ -45,7 +45,10 @@
     </style>
 </head>
 <body>
-    <div id="msg"></div>
+    <div id="msg-wrapper">
+        <div id="msg"></div>
+        <div id="indicator"></div>
+    </div>
     <button id="request_btn"> </button>
 </body>
 </html>
