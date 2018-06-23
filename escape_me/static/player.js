@@ -27,6 +27,10 @@ $(document).ready(function() {
         socket.emit('hint_request');
         console.log("hint_request")
     });
+
+    var ping_loop = setInterval(function() {
+        socket.emit('check_host_status');
+    }, 4000)
 });
 
 function set_hint(new_hint_body, animation = true) {
