@@ -1,6 +1,6 @@
 from flask_socketio import emit, disconnect
 from .. import socketio
-from ..db import get_db
+from ..utils import get_ip_address
 from .models import State, Hints
 
 from logging import getLogger
@@ -69,13 +69,9 @@ def hint_clear():
 
 @socketio.on('connect')
 def client_connected():
-    print("Client connected")
+    ip = get_ip_address()
+    state.ip_address = ip
     broadcast_database()
-
-
-@socketio.on('disconnect')
-def client_disconnected():
-    print('Client disconnected')
 
 
 @socketio.on('disconnect_request')
