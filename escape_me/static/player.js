@@ -16,6 +16,7 @@ $(document).ready(function() {
         console.log(data)
         animate_hint_requested(data.state.hint_requested);
         animate_hint_available(data.state.hint_available);
+        ip_address_visible(!data.state.host_was_found, data.state.ip_address);
         if (initial) {
             initial = false;
             set_hint(data.state.hint_body, animation = false);
@@ -59,6 +60,15 @@ function text_animate() {
     if (hint_body.length == $('#msg').text().length) {
         console.log("Done animating!");
         clearInterval(text_animate_loop);
+    }
+}
+
+function ip_address_visible(visible, address = null) {
+    if (visible) {
+        $('#ipaddress span').text(address);
+        $('#ipaddress').show();
+    } else {
+        $('#ipaddress').hide();
     }
 }
 

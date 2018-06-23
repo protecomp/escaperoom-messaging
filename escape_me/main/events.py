@@ -1,7 +1,8 @@
-from flask_socketio import emit, disconnect
+from flask_socketio import emit
 from .. import socketio
 from ..utils import get_ip_address
 from .models import State, Hints
+from . import main
 
 from logging import getLogger
 logger = getLogger(__name__)
@@ -13,6 +14,11 @@ hints = Hints()
 def broadcast_database():
     emit('database', {'all_hints': hints.get_all(), 'state': state.get_all()},
          broadcast=True)
+
+
+@main.before_app_first_request
+def reset_state():
+    state.reset()
 
 
 @socketio.on('hint_request')
@@ -64,7 +70,6 @@ def hint_send(payload):
 @socketio.on('hint_clear')
 def hint_clear():
     hint_send({'hint_body': ''})
-    broadcast_database()
 
 
 @socketio.on('connect')
@@ -74,10 +79,10 @@ def client_connected():
     broadcast_database()
 
 
-@socketio.on('disconnect_request')
-def disconnect_request():
-    emit('disconnected')
-    disconnect()
+@socketio.on('host_connected')
+def host_connected():
+    state.host_was_found = True
+    broadcast_database()
 
 
 @socketio.on('ping')

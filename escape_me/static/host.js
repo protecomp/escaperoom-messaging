@@ -56,6 +56,7 @@ $(document).ready(function() {
 
     socket.on('connect', function() {
         $('#connection_status').text("Connected")
+        socket.emit('host_connected');
         console.log("Connected");
     });
     

@@ -61,3 +61,6 @@ class State(DB_Base):
         for row in self.db_query('SELECT key, value FROM state'):
             ret[row['key']] = json.loads(row['value'])
         return ret
+
+    def reset(self):
+        self.db_exec('DELETE FROM state')
