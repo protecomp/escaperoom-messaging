@@ -29,7 +29,7 @@ $(document).ready(function() {
     });
 
     var ping_loop = setInterval(function() {
-        socket.emit('check_host_status');
+        socket.emit('check_net_status');
     }, 4000)
 });
 
