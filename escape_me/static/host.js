@@ -104,6 +104,9 @@ $(document).ready(function() {
     $('#hint_clear_btn').click(function(event) {
         socket.emit('hint_clear');
     });
+    $('#refresh_player').click(function(event) {
+        socket.emit('refresh_player');
+    })
 
     update_hint_available(false);
     $('#hint_available_btn').click(function(event) {

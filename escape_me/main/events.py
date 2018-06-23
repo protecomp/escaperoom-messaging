@@ -1,6 +1,6 @@
 from flask_socketio import emit
 from .. import socketio
-from ..utils import get_ip_address
+from ..utils import get_ip_address, refresh_player_view
 from .models import State, Hints
 from . import main
 
@@ -98,3 +98,8 @@ def broadcast_ping():
 @socketio.on('player_pong')
 def broadcast_pong():
     emit('player_pong', broadcast=True)
+
+
+@socketio.on('refresh_player')
+def refresh_player():
+    refresh_player_view()
