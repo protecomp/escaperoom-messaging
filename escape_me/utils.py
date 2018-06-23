@@ -22,6 +22,6 @@ def refresh_player_view():
     ret = subprocess.run(["/usr/bin/which", "xdotool"], stdout=subprocess.PIPE)
     if ret.returncode == 0:
         xdotool = ret.stdout.decode().strip()
-        subprocess.run([xdotool, 'key', 'ctrl+F5'])
+        subprocess.run([xdotool, 'key', 'ctrl+F5'], env={'DISPLAY': ':0'})
     else:
         print("No xdotool")
