@@ -13,7 +13,6 @@ $(document).ready(function() {
         set_hint(msg['hint_body']);
     });
     socket.on('database', function(data) {
-        console.log(data)
         animate_hint_requested(data.state.hint_requested);
         animate_hint_available(data.state.hint_available);
         ip_address_visible(!data.state.host_was_found, data.state.ip_address);
@@ -23,7 +22,6 @@ $(document).ready(function() {
             set_hint(data.state.hint_body, animation = false);
         }
     });
-
     $('#request_btn').on('click', function(event) {
         socket.emit('hint_request');
         console.log("hint_request")

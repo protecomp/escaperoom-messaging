@@ -21,7 +21,7 @@ $(document).ready(function() {
             $('#player-ping-pong').text("-");
             $('#player_connection_status').text("Player not connected")
         }
-    }, 5000)
+    }, TIMEOUT_MS)
     function update_player_ping() {
         time_diff = (new Date()).getTime() - player_ping_time;
         $('#player-ping-pong').text(time_diff);

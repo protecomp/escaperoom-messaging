@@ -79,14 +79,6 @@ def client_connected():
     broadcast_database()
 
 
-@socketio.on('check_net_status')
-def check_net_status():
-    if not state.ip_address:
-        ip = get_ip_address()
-        state.ip_address = ip
-        broadcast_database()
-
-
 @socketio.on('host_connected')
 def host_connected():
     state.host_was_found = True
