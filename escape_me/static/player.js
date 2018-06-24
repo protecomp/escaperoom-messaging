@@ -3,7 +3,7 @@ var hint_body = "";
 $(document).ready(function() {
 
     // Connect to the Socket.IO server.
-    var socket = io.connect();
+    var socket = io();
     var initial = true;
 
     socket.on('player_ping', function() {
@@ -17,6 +17,7 @@ $(document).ready(function() {
         animate_hint_requested(data.state.hint_requested);
         animate_hint_available(data.state.hint_available);
         ip_address_visible(!data.state.host_was_found, data.state.ip_address);
+
         if (initial) {
             initial = false;
             set_hint(data.state.hint_body, animation = false);
@@ -28,9 +29,6 @@ $(document).ready(function() {
         console.log("hint_request")
     });
 
-    var ping_loop = setInterval(function() {
-        socket.emit('check_net_status');
-    }, 4000)
 });
 
 function set_hint(new_hint_body, animation = true) {

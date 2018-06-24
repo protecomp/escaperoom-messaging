@@ -6,22 +6,13 @@ $(document).ready(function() {
     el_hint_body = $('#emit_data');
 
     // Connect to the Socket.IO server.
-    socket = io.connect();
+    socket = io();
 
     // Set a ping loop and pong event handler
     var TIMEOUT_MS = 5000;
-    var ping_time = -1;
     var player_ping_time = -1;
     var last_reponse = -1;
     var ping_loop = setInterval(function() {
-        socket.emit('ping');
-        if (ping_time === -1) {
-            ping_time = (new Date()).getTime();
-        } else {
-            update_ping();
-            $('#connection_status').text("Connection lost")
-        }
-
         // Ping to player view
         socket.emit('player_ping');
         if (player_ping_time === -1) {
@@ -30,21 +21,14 @@ $(document).ready(function() {
             $('#player-ping-pong').text("-");
             $('#player_connection_status').text("Player not connected")
         }
-    }, 1000)
-    function update_ping() {
-        time_diff = (new Date()).getTime() - ping_time;
-        $('#ping-pong').text(time_diff);
-    }
+    }, 5000)
     function update_player_ping() {
         time_diff = (new Date()).getTime() - player_ping_time;
         $('#player-ping-pong').text(time_diff);
     }
-    socket.on('pong', function() {
+    socket.on('pong', function(latency) {
         $('#connection_status').text("Connected")
-        if (ping_time !== -1) {
-            update_ping();
-        }
-        ping_time = -1;
+        $('#ping-pong').text(latency);
     });
     socket.on('player_pong', function() {
         $('#player_connection_status').text("Player connected")
