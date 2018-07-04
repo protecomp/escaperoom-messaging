@@ -1,6 +1,6 @@
 from flask_socketio import emit
 from .. import socketio
-from ..utils import get_ip_address, refresh_player_view
+from ..utils import get_ip_address, refresh_player_view, play_sound
 from .models import State, Hints
 from . import main
 
@@ -35,6 +35,8 @@ def hint_request():
 def hint_available(payload):
     state.hint_available = payload.get('hint_available', True)
     state.hint_available_body = payload.get('hint_body', '')
+    if state.hint_available and state.hint_available_body:
+        play_sound()
     broadcast_database()
 
     if (state.hint_requested):

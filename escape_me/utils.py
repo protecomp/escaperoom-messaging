@@ -1,3 +1,4 @@
+import os
 import socket
 import subprocess
 
@@ -25,3 +26,9 @@ def refresh_player_view():
         subprocess.run([xdotool, 'key', 'ctrl+F5'], env={'DISPLAY': ':0'})
     else:
         print("No xdotool")
+
+
+def play_sound():
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    audio_file = os.path.join(dir_path, '..', 'files/morsecode_01.wav')
+    p = subprocess.Popen(['aplay', audio_file])
