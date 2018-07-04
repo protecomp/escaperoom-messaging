@@ -121,6 +121,7 @@ function update_hint_buttons() {
     let empty = (el_hint_body.val().length === 0);
     $('#send_btn').attr('disabled', empty);
     $('#save_btn').attr('disabled', empty);
+    $('#hint_available_btn').attr('disabled', empty);
 }
 
 function update_hint_available(available) {
@@ -135,6 +136,7 @@ function update_hint_available(available) {
         $('#hint-avail-indicator').hide();
         el_hint_body.attr('disabled', false);
     }
+    update_hint_buttons();
 }
 
 function set_hint_requested(on_off) {
