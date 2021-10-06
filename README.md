@@ -26,3 +26,9 @@ FLASK_APP=escape_me
 flask init-db
 flask run -h 0.0.0.0 -p 5000
 ```
+
+In production:
+
+```
+env/bin/python run.py
+```
