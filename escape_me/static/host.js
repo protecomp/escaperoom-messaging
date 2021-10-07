@@ -43,7 +43,7 @@ $(document).ready(function() {
         socket.emit('host_connected');
         console.log("Connected");
     });
-    
+
     socket.on('database', function(data) {
         log_entry('database' ,'state: ' + JSON.stringify(data.state));
         update_database_table(data.all_hints);
@@ -63,7 +63,11 @@ $(document).ready(function() {
         log_entry('hint_set' ,'body: ' + msg.hint_body);
         set_hint_requested(false);
     });
-    
+
+    socket.on('counter_event', function(msg) {
+	var sec_left = msg['sec'];
+	document.getElementById('counter').textContent = Math.floor(sec_left / 60) + ':' + ("" + sec_left % 60).padStart(2, "0");
+    });
 
 
     // Handlers for the different forms in the page.
@@ -105,6 +109,16 @@ $(document).ready(function() {
             update_hint_available(true);
         }
     });
+
+    $('#start_counter').click(function(event) {
+        socket.emit('start_counter');
+    })
+    $('#stop_counter').click(function(event) {
+        socket.emit('stop_counter');
+    })
+    $('#reset_counter').click(function(event) {
+        socket.emit('reset_counter');
+    })
 });
 
 function update_showing_hint_body(value) {

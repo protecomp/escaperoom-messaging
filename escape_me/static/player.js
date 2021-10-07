@@ -1,9 +1,10 @@
 var hint_body = "";
+var socket;
 
 $(document).ready(function() {
 
     // Connect to the Socket.IO server.
-    var socket = io();
+    socket = io();
     var initial = true;
 
     socket.on('player_ping', function() {
@@ -27,6 +28,9 @@ $(document).ready(function() {
         console.log("hint_request")
     });
 
+    socket.on('start_counter', start_counter);
+    socket.on('stop_counter', stop_counter);
+    socket.on('reset_counter', reset_counter);
 });
 
 function set_hint(new_hint_body, animation = true) {

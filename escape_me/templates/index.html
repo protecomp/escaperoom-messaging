@@ -37,12 +37,13 @@
         Async mode is: <b>{{ async_mode }}</b> (<span id="connection_status">Not Connected</span>)<br>
         Average ping/pong latency: <b><span id="ping-pong"></span> ms</b>
     </p>
+    <p>COUNTER: <span id="counter"></span><br><button id="start_counter">START</button> ---- <button id="stop_counter">STOP</button> ----- <button id="reset_counter">RESET</button></p>
     <p>
         Player connection status: <span id="player_connection_status">Player not connected</span><br>
         Player view latency: <b><span id="player-ping-pong">-</span> ms</b><br />
         Hint requested: <b><span id="hint_requested">false</span></b><br />
         Currently showing hint: <button id="hint_clear_btn">Clear</button><br /><b><span id="showing_hint_body"></span></b><br>
-        Refresh player view: <button id="refresh_player">Refresh</button><br>
+        Refresh player view: <button id="refresh_player">Refresh</button> (stops the counter)<br>
     </p>
     <p>
         Notifications: <b><span id="notification_status">Unknown</span></b>

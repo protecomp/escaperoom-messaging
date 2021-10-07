@@ -107,3 +107,22 @@ def broadcast_pong():
 @socketio.on('refresh_player')
 def refresh_player():
     refresh_player_view()
+
+@socketio.on('start_counter')
+def start_counter():
+    logger.info("Counter started")
+    emit("start_counter", broadcast=True)
+
+@socketio.on('stop_counter')
+def stop_counter():
+    logger.info("Counter stopped")
+    emit("stop_counter", broadcast=True)
+
+@socketio.on('reset_counter')
+def reset_counter():
+    logger.info("Counter reset")
+    emit("reset_counter", broadcast=True)
+
+@socketio.on('counter_event')
+def counter_event(payload):
+    emit("counter_event", payload, broadcast=True)
